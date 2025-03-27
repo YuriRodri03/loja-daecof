@@ -1,0 +1,213 @@
+/* Container principal */
+.Container {
+  padding: 20px;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+}
+
+/* Título principal */
+h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* Seção de adicionar produto */
+.AddProduct {
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+}
+
+.AddProduct input {
+  width: calc(100% - 20px);
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.AddProduct input:focus {
+  border-color: #3498db; /* Destaque ao focar */
+  outline: none;
+}
+
+.AddProduct button {
+  margin-top: 10px;
+  padding: 12px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.AddProduct button:hover {
+  background-color: #45a049;
+}
+
+/* Seção de edição de produtos */
+.ProductEdit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px auto;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+}
+
+.ProductEdit input {
+  width: 50%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.ProductEdit input:focus {
+  border-color: #3498db; /* Destaque ao focar */
+  outline: none;
+}
+
+.ProductEdit button {
+  padding: 12px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.ProductEdit button:hover {
+  background-color: #2980b9;
+}
+
+/* Botão de remover produto */
+.RemoveButton {
+  padding: 12px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.RemoveButton:hover {
+  background-color: #c0392b;
+}
+
+/* Mensagem de carregamento */
+.LoadingMessage {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-top: 20px;
+}
+
+/* Botão de deletar produto */
+.DeleteButton {
+  margin-top: 10px;
+  padding: 12px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.DeleteButton:hover {
+  background-color: #c0392b;
+}
+
+/* Seção de edição de informações de pagamento */
+.EditPaymentInfo {
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #ffffff;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+}
+
+.EditPaymentInfo input {
+  width: calc(100% - 20px);
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.EditPaymentInfo input:focus {
+  border-color: #3498db; /* Destaque ao focar */
+  outline: none;
+}
+
+.EditPaymentInfo button {
+  margin-top: 10px;
+  padding: 12px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.EditPaymentInfo button:hover {
+  background-color: #45a049;
+}
+
+/* Links de pagamento */
+.EditPaymentInfo ul {
+  list-style: none;
+  padding: 0;
+}
+
+.EditPaymentInfo li {
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.EditPaymentInfo li button {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.EditPaymentInfo li button:hover {
+  background-color: #c0392b;
+}

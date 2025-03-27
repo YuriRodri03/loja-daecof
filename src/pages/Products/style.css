@@ -1,0 +1,70 @@
+.Container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.GoToCartButton {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.GoToCartButton:hover {
+  background-color: #45a049;
+}
+
+.Products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Ajusta para 2x2 ou 4x1 automaticamente */
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.Product {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.ProductImage {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.ProductOptions {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.ProductOptions select,
+.ProductOptions input {
+  width: 100%;
+  margin-top: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+}

@@ -12,11 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Substitua pela URL do frontend no Render
+  origin: process.env.FRONTEND_URL || 'https://loja-daecof.onrender.com/',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Permite envio de cookies, se necessário
 }));
-
 // Configura o body-parser para aceitar tamanhos maiores
 app.use(bodyParser.json({ limit: '10mb' })); // Aumenta o limite para 10MB
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));

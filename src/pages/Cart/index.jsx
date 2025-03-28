@@ -13,6 +13,10 @@ function Cart() {
     updatedCart.splice(index, 1); // Remove o item pelo índice
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart)); // Atualiza o localStorage
+
+    const calculateTotal = () => {
+      return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    };
   };
 
   return (

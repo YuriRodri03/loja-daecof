@@ -31,7 +31,7 @@ function Home() {
 
   const handleSubmit = async () => {
     try {
-      await axios.post('http://localhost:5001/register', formData);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, formData); // Usa a URL do backend do .env
       alert('Usuário cadastrado com sucesso!');
       navigate('/products');
     } catch (error) {

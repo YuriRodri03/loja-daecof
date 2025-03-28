@@ -22,10 +22,14 @@ function Admin() {
 
   const [newLink, setNewLink] = useState('');
 
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL, // URL do backend definida no .env
+  });
+
   // Função para buscar produtos
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/products');
+      const response = await api.get('/products');
       setProducts(response.data);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -35,7 +39,7 @@ function Admin() {
   // Função para buscar informações de pagamento
   const fetchPaymentInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/payment');
+      const response = await api.get('/payment');
       setPaymentInfo(response.data || {});
     } catch (error) {
       console.error('Erro ao buscar informações de pagamento:', error);
@@ -61,7 +65,7 @@ function Admin() {
         isAdmin: true,
       };
 
-      await axios.post('http://localhost:5001/products', productData);
+      await api.post('/products', productData);
       alert('Produto adicionado com sucesso!');
       setNewProduct({ name: '', sizes: '', gender: '', image: '', price: '' });
       fetchProducts(); // Atualiza a lista de produtos
@@ -92,7 +96,7 @@ function Admin() {
     formData.append('isAdmin', true);
 
     try {
-      await axios.put(`http://localhost:5001/products/${id}`, formData, {
+      await api.put(`/products/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'is-admin': true, // Adiciona a flag de administrador nos cabeçalhos
@@ -107,7 +111,7 @@ function Admin() {
 
   const deleteProduct = async (id) => {
     try {
-      await axios.delete(`http://localhost:5001/products/${id}`, {
+      await api.delete(`/products/${id}`, {
         headers: {
           'is-admin': true, // Adiciona a flag de administrador nos cabeçalhos
         },
@@ -122,7 +126,7 @@ function Admin() {
 
   const updatePaymentInfo = async () => {
     try {
-      await axios.put('http://localhost:5001/payment', paymentInfo, {
+      await api.put('/payment', paymentInfo, {
         headers: {
           'is-admin': true,
         },
@@ -138,7 +142,7 @@ function Admin() {
     if (newLink.trim()) {
       setPaymentInfo((prev) => ({
         ...prev,
-        links: [...(prev.links || []), newLink.trim()], 
+        links: [...(prev.links || []), newLink.trim()],
       }));
       setNewLink('');
     }

@@ -11,7 +11,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Substitua pela URL do frontend no Render
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Permite envio de cookies, se necessário
+}));
 
 // Configura o body-parser para aceitar tamanhos maiores
 app.use(bodyParser.json({ limit: '10mb' })); // Aumenta o limite para 10MB

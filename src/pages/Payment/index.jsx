@@ -11,7 +11,7 @@ function Payment() {
   // Função para buscar informações de pagamento
   const fetchPaymentInfo = async () => {
     try {
-      const response = await axios.get('http://localhost:5001/payment');
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/payment`); // Usa a URL do backend do .env
       setPaymentInfo(response.data || {});
     } catch (error) {
       console.error('Erro ao buscar informações de pagamento:', error);
@@ -26,14 +26,28 @@ function Payment() {
     setProof(event.target.files[0]);
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!proof) {
       alert('Por favor, anexe o comprovante de pagamento antes de finalizar.');
       return;
     }
 
-    alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
-    navigate('/Products');
+    try {
+      const formData = new FormData();
+      formData.append('proof', proof);
+
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
+      navigate('/products');
+    } catch (error) {
+      console.error('Erro ao enviar comprovante de pagamento:', error);
+      alert('Erro ao processar o pagamento. Tente novamente.');
+    }
   };
 
   return (

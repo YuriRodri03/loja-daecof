@@ -158,7 +158,6 @@ app.get('/users', async (req, res) => {
   }
 });
 
-const jwt = require('jsonwebtoken');
 
 // Middleware para autenticação
 const authenticate = (req, res, next) => {

@@ -210,3 +210,38 @@ h1 {
 .EditPaymentInfo li button:hover {
   background-color: #c0392b;
 }
+
+.ExportOrders {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ExportOrders label {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  color: #333;
+}
+
+.ExportOrders input {
+  padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.ExportOrders button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ExportOrders button:hover {
+  background-color: #45a049;
+}

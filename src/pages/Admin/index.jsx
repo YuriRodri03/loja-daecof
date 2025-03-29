@@ -155,6 +155,36 @@ function Admin() {
     }));
   };
 
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+  
+    const exportOrders = async () => {
+      if (!startDate || !endDate) {
+        alert('Por favor, selecione o período de tempo.');
+        return;
+      }
+  
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/export`, {
+          params: { start: startDate, end: endDate },
+          responseType: 'blob', // Para lidar com o arquivo Excel
+        });
+  
+
+      // Cria um link para download do arquivo
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'pedidos.xlsx'); // Nome do arquivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Erro ao exportar pedidos:', error);
+      alert('Erro ao exportar pedidos. Tente novamente.');
+    }
+  };
+  
   return (
     <div className="AdminContainer">
       <h1>Administração</h1>
@@ -269,6 +299,27 @@ function Admin() {
         />
         <button onClick={handleAddLink}>Adicionar Link</button>
         <button onClick={updatePaymentInfo}>Salvar Informações de Pagamento</button>
+      </div>
+      {/* Seção para exportar pedidos */}
+      <h2>Exportar Pedidos</h2>
+      <div className="ExportOrders">
+        <label>
+          Data de Início:
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+        </label>
+        <label>
+          Data de Fim:
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+        </label>
+        <button onClick={exportOrders}>Exportar para Excel</button>
       </div>
     </div>
   );

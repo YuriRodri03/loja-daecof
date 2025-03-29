@@ -134,6 +134,9 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email, senha });
 
     if (user) {
+      // Gera o token JWT
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      
       res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
     } else {
       res.status(401).send({ message: 'Email ou senha inválidos!' });
@@ -173,9 +176,8 @@ const authenticate = (req, res, next) => {
 };
 
 // Endpoint para obter os dados do usuário logado
-app.get('/user/profile', async (req, res) => {
+app.get('/user/profile', authenticate, async (req, res) => {
   try {
-    const userId = req.userId; // Supondo que o middleware de autenticação já adiciona o userId ao req
     const user = await User.findById(userId);
 
     if (!user) {

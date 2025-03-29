@@ -35,7 +35,7 @@ function Home() {
     try {
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, formData); // Usa a URL do backend do .env
       alert('Usuário cadastrado com sucesso!');
-      navigate('/products');
+      navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError('Email já registrado!');

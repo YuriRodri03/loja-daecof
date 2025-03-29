@@ -123,7 +123,7 @@ app.post('/register', async (req, res) => {
     // Criptografa a senha antes de salvar no banco de dados
     const hashedPassword = bcrypt.hashSync(senha, 10);
 
-    const user = new User({ nome, email, telefone, curso, senha, isAdmin });
+    const user = new User({ nome, email, telefone, curso, senha: hashedPassword, isAdmin });
     await user.save();
     res.send({ message: 'Usuário cadastrado com sucesso!' });
   } catch (error) {

@@ -5,7 +5,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const ExcelJS = require('exceljs'); // Biblioteca para exportar pedidos para Excel
+const ExcelJS = require('exceljs'); 
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +16,27 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Permite envio de cookies, se necessário
 }));
+
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    res.sendFile(path.resolve(__dirname, 'index.html')); // Ajuste o caminho se necessário
+  } else {
+    next();
+  }
+});
+
+// Serve os arquivos estáticos do frontend
+app.use(express.static(path.join(__dirname)));
+
+// Redireciona todas as requisições que não sejam da API para o index.html
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    res.sendFile(path.resolve(__dirname, 'index.html')); // Ajusta o caminho para a raiz
+  } else {
+    res.status(404).send({ message: 'Not Found' });
+  }
+});
+
 // Configura o body-parser para aceitar tamanhos maiores
 app.use(bodyParser.json({ limit: '10mb' })); // Aumenta o limite para 10MB
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));

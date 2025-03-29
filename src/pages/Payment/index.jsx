@@ -51,6 +51,7 @@ function Payment() {
     try {
       const formData = new FormData();
       formData.append('proof', proof);
+      formData.append('userName', userInfo.name); // Preenche com os dados do usuário logado
       formData.append('userEmail', userInfo.email); // Preenche com os dados do usuário logado
       formData.append('userPhone', userInfo.phone);
       formData.append('userCourse', userInfo.course);

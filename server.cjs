@@ -153,6 +153,25 @@ app.get('/users', async (req, res) => {
   }
 });
 
+const jwt = require('jsonwebtoken');
+
+// Middleware para autenticação
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extrai o token do cabeçalho Authorization
+
+  if (!token) {
+    return res.status(401).send({ message: 'Token não fornecido.' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifica o token
+    req.userId = decoded.id; // Adiciona o userId ao req
+    next();
+  } catch (error) {
+    res.status(401).send({ message: 'Token inválido.' });
+  }
+};
+
 // Endpoint para obter os dados do usuário logado
 app.get('/user/profile', async (req, res) => {
   try {
@@ -181,12 +200,13 @@ app.post('/create-order', async (req, res) => {
 
   try {
     const newOrder = new Order({
-      items,
-      proofOfPayment,
       date,
+      userName,
       userEmail,
       userPhone,
       userCourse,
+      items,
+      proofOfPayment,
     });
 
     await newOrder.save();
@@ -375,6 +395,7 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const newOrder = new Order({
       proofOfPayment: file.filename, // Nome do arquivo salvo
       date: new Date().toISOString(), // Data atual
+      userName,
       userEmail,
       userPhone,
       userCourse,

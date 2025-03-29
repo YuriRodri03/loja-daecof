@@ -108,7 +108,7 @@ function Products() {
                   <input
                     type='number'
                     min='1'
-                    placeholder='1'
+                    placeholder='0'
                     value={selectedOptions[product._id]?.quantity || ''}
                     onChange={(e) => handleOptionChange(product._id, 'quantity', e.target.value)}
                   />

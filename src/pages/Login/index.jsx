@@ -10,26 +10,15 @@ function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Estado para alternar a visualização da senha
-  const [loading, setLoading] = useState(false); // Estado para indicar carregamento
 
   const handleLogin = async () => {
-    // Validação de campos
-    if (!email || !senha) {
-      alert('Por favor, preencha todos os campos.');
-      return;
-    }
-
-    setLoading(true); // Inicia o estado de carregamento
-
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, { email, senha }); // Usa a URL do backend do .env
-      const { isAdmin, token } = response.data;
+      const { isAdmin } = response.data;
 
-      // Salva o token JWT no localStorage
-      localStorage.setItem('token', token);
+      // Salva o estado de admin no localStorage
       localStorage.setItem('isAdmin', isAdmin);
 
-      // Redireciona o usuário com base no tipo de conta
       if (isAdmin) {
         navigate('/admin'); // Redireciona para a página de admin
       } else {
@@ -38,8 +27,6 @@ function Login() {
     } catch (error) {
       alert('Email ou senha inválidos!');
       console.error('Erro ao fazer login:', error);
-    } finally {
-      setLoading(false); // Finaliza o estado de carregamento
     }
   };
 
@@ -69,12 +56,8 @@ function Login() {
             {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Ícone de olho */}
           </button>
         </div>
-        <button
-          type='button'
-          onClick={handleLogin}
-          disabled={loading} // Desabilita o botão enquanto está carregando
-        >
-          {loading ? 'Entrando...' : 'Entrar'}
+        <button type='button' onClick={handleLogin}>
+          Entrar
         </button>
       </form>
     </div>

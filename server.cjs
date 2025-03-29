@@ -6,6 +6,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const ExcelJS = require('exceljs'); 
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
@@ -136,7 +138,7 @@ app.post('/login', async (req, res) => {
     if (user) {
       // Gera o token JWT
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      
+
       res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
     } else {
       res.status(401).send({ message: 'Email ou senha inválidos!' });

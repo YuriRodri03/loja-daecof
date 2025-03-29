@@ -103,7 +103,6 @@ form select:focus {
 .password-container .toggle-password {
   position: absolute;
   right: 10px; /* Posiciona o botão no lado direito do campo */
-  transform: translateY(-50%); /* Ajusta o alinhamento vertical */
   background: none;
   border: none;
   cursor: pointer;

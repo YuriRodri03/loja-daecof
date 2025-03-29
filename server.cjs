@@ -28,6 +28,15 @@ app.use((req, res, next) => {
 // Serve os arquivos estáticos do frontend
 app.use(express.static(path.join(__dirname)));
 
+// Middleware para verificar se o usuário é administrador
+const isAdmin = (req, res, next) => {
+  const isAdmin = req.body.isAdmin || req.headers['is-admin']; // Verifica no corpo ou no cabeçalho
+  if (!isAdmin) {
+    return res.status(403).send({ message: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
+  }
+  next();
+};
+
 // Rotas da API (exemplo)
 const apiRouter = express.Router();
 
@@ -228,15 +237,6 @@ const PaymentInfoSchema = new mongoose.Schema({
 });
 
 const PaymentInfo = mongoose.model('PaymentInfo', PaymentInfoSchema);
-
-// Middleware para verificar se o usuário é administrador
-const isAdmin = (req, res, next) => {
-  const isAdmin = req.body.isAdmin || req.headers['is-admin']; // Verifica no corpo ou no cabeçalho
-  if (!isAdmin) {
-    return res.status(403).send({ message: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
-  }
-  next();
-};
 
 // Rota para registrar usuários
 app.post('/register', async (req, res) => {

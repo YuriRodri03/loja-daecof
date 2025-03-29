@@ -133,13 +133,13 @@ app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 
   try {
-    const user = await User.findOne({ email, senha });
+    const user = await User.findOne({ email });
 
     
     if (user && bcrypt.compareSync(senha, user.senha)) {
       // Gera o token JWT
       const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      
+
       res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
     } else {
       res.status(401).send({ message: 'Email ou senha inválidos!' });

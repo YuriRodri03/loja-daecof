@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Biblioteca de ícones
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import Logo from '../../assets/logoda.png';
 import axios from 'axios';
 import './style.css';

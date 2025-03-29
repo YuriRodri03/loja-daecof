@@ -120,6 +120,9 @@ app.post('/register', async (req, res) => {
       return res.status(400).send({ message: 'Email já registrado!' });
     }
 
+    // Criptografa a senha antes de salvar no banco de dados
+    const hashedPassword = bcrypt.hashSync(senha, 10);
+
     const user = new User({ nome, email, telefone, curso, senha, isAdmin });
     await user.save();
     res.send({ message: 'Usuário cadastrado com sucesso!' });

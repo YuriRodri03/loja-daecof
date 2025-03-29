@@ -5,6 +5,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const ExcelJS = require('exceljs'); 
 require('dotenv').config();
@@ -134,9 +135,11 @@ app.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email, senha });
 
-    if (user) {
-       // Gera o token JWT
-       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    
+    if (user && bcrypt.compareSync(senha, user.senha)) {
+      // Gera o token JWT
+      const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      
       res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
     } else {
       res.status(401).send({ message: 'Email ou senha inválidos!' });

@@ -1,119 +1,115 @@
-.Container {
+/* Estilo geral */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Contêiner principal */
+.Container {
+  display: flex;
   flex-direction: column;
-  text-align: center;
-  padding: 20px;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  min-height: 100vh; 
+  max-width: 400px;
+  padding: 20px;
+  background: #2E2D4E;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #fff;
 }
 
-.Container h1 {
-  font-size: 28px;
-  color: #fff;
-  white-space: nowrap;
+/* Logo */
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Título */
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
+/* Formulário */
 form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 30px;
-  border-radius: 10px;
-  background: #2E2D4E;
-  width: 100%; 
-  max-width: 600px; 
-  margin: 0 auto; 
+  gap: 15px;
+  width: 100%;
 }
 
-form button {
-  border-radius: 30px;
-  background-color: #888AE1;
-  height: 40px;
-  width: 100%; 
-  border: none;
-  font-weight: bold;
-}
-
-form button:hover {
-  opacity: 0.8;
-}
-
+/* Inputs e Select */
 form input,
 form select {
+  padding: 10px;
+  font-size: 16px;
   border: 1px solid #48456C;
-  border-radius: 30px;
-  height: 40px;
+  border-radius: 5px;
   background-color: #363653;
   color: #fff;
-  font-size: 16px;
-  padding-left: 10px;
-  width: 100%; 
   outline: none;
 }
 
 form input:focus,
 form select:focus {
-  border-color: #888AE1; /* Altera a cor da borda ao focar */
-  box-shadow: 0 0 5px rgba(136, 138, 225, 0.5); /* Adiciona um efeito de sombra */
-  background-color: #2E2D4E; /* Altera o fundo ao focar */
-  color: #fff; /* Garante que o texto continue visível */
+  border-color: #888AE1;
+  box-shadow: 0 0 5px rgba(136, 138, 225, 0.5);
 }
 
-.error {
-  color: red;
-  margin-bottom: 10px;
+/* Botões */
+form button {
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #11998e;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.logo {
-  width: 150px; /* Define a largura da logo */
-  height: auto; /* Mantém a proporção da imagem */
-  margin-bottom: 20px; /* Adiciona um espaço abaixo da logo */
+form button:hover {
+  background-color: #0e8a7a;
 }
 
+/* Botão de alternar senha */
 .password-container {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%; /* Garante que o container tenha o mesmo tamanho dos outros campos */
 }
 
 .password-container input {
-  width: 100%; /* Garante que o campo de senha ocupe todo o espaço disponível */
+  width: 100%;
   padding-right: 40px; /* Espaço para o botão de alternar senha */
-  border: 1px solid #48456C;
-  border-radius: 30px;
-  height: 40px;
-  background-color: #363653;
-  color: #fff;
-  font-size: 16px;
-  padding-left: 10px;
-  outline: none;
-}
-
-.password-container input:focus {
-  border-color: #888AE1; /* Altera a cor da borda ao focar */
-  box-shadow: 0 0 5px rgba(136, 138, 225, 0.5); /* Adiciona um efeito de sombra */
-  background-color: #2E2D4E; /* Altera o fundo ao focar */
-  color: #fff; /* Garante que o texto continue visível */
 }
 
 .password-container .toggle-password {
   position: absolute;
-  right: 10px; /* Posiciona o botão no lado direito do campo */
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
-  cursor: pointer;
   color: #888AE1;
   font-size: 18px;
-  z-index: 2; /* Garante que o botão fique acima do campo */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 30px; /* Ajusta a altura do botão */
-  width: 30px; /* Ajusta a largura do botão */
-  padding: 0; /* Remove o preenchimento interno */
-  line-height: 1; /* Garante que o ícone esteja centralizado */
+  cursor: pointer;
+}
+
+/* Mensagem de erro */
+.error {
+  color: #ff6b6b;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
 }

@@ -333,6 +333,34 @@ app.get('/orders/export', async (req, res) => {
   }
 });
 
+// Endpoint para receber o comprovante de pagamento
+app.post('/payment/proof', upload.single('proof'), async (req, res) => {
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).send({ message: 'Nenhum arquivo enviado.' });
+    }
+
+    // Salva o comprovante no banco de dados (opcional)
+    const newOrder = new Order({
+      proofOfPayment: file.filename, // Nome do arquivo salvo
+      date: new Date().toISOString(), // Data atual
+      userEmail: req.body.userEmail || 'email@example.com', // Exemplo de dados adicionais
+      userPhone: req.body.userPhone || '123456789',
+      userCourse: req.body.userCourse || 'Curso',
+      items: req.body.items ? JSON.parse(req.body.items) : [], // Converte itens enviados como JSON
+    });
+
+    await newOrder.save();
+
+    res.status(200).send({ message: 'Comprovante enviado com sucesso!', file });
+  } catch (error) {
+    console.error('Erro ao processar o comprovante:', error);
+    res.status(500).send({ message: 'Erro ao processar o comprovante.', error });
+  }
+});
+
 // Inicia o servidor
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

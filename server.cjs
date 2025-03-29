@@ -28,6 +28,118 @@ app.use((req, res, next) => {
 // Serve os arquivos estáticos do frontend
 app.use(express.static(path.join(__dirname)));
 
+// Rotas da API (exemplo)
+const apiRouter = express.Router();
+
+// Rotas de usuários
+apiRouter.post('/register', async (req, res) => {
+  const { nome, email, telefone, curso, senha } = req.body;
+
+  try {
+    const isAdmin = email === process.env.ADMIN_EMAIL && senha === process.env.ADMIN_PASSWORD;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).send({ message: 'Email já registrado!' });
+    }
+
+    const user = new User({ nome, email, telefone, curso, senha, isAdmin });
+    await user.save();
+    res.send({ message: 'Usuário cadastrado com sucesso!' });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao cadastrar usuário', error });
+  }
+});
+
+apiRouter.post('/login', async (req, res) => {
+  const { email, senha } = req.body;
+
+  try {
+    const user = await User.findOne({ email, senha });
+
+    if (user) {
+      res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
+    } else {
+      res.status(401).send({ message: 'Email ou senha inválidos!' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao fazer login', error });
+  }
+});
+
+// Rotas de produtos
+apiRouter.get('/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.send(products);
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao obter produtos', error });
+  }
+});
+
+apiRouter.post('/products', isAdmin, async (req, res) => {
+  const { name, sizes, gender, price, image } = req.body;
+
+  try {
+    const newProduct = new Product({
+      name,
+      sizes: sizes.split(','),
+      gender: gender.split(','),
+      image,
+      price,
+    });
+    await newProduct.save();
+    res.status(201).send({ message: 'Produto criado com sucesso!', product: newProduct });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao criar produto', error });
+  }
+});
+
+// Rotas de pedidos
+apiRouter.post('/create-order', async (req, res) => {
+  const { items, proofOfPayment, date, userEmail, userPhone, userCourse } = req.body;
+
+  try {
+    const newOrder = new Order({
+      items,
+      proofOfPayment,
+      date,
+      userEmail,
+      userPhone,
+      userCourse,
+    });
+
+    await newOrder.save();
+    res.status(201).send({ message: 'Pedido salvo com sucesso!' });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao salvar pedido', error });
+  }
+});
+
+// Rotas de pagamento
+apiRouter.get('/payment', async (req, res) => {
+  try {
+    const paymentInfo = await PaymentInfo.findOne();
+    res.send(paymentInfo);
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao obter informações de pagamento', error });
+  }
+});
+
+apiRouter.put('/payment', isAdmin, async (req, res) => {
+  const paymentInfo = req.body;
+
+  try {
+    await PaymentInfo.findOneAndUpdate({}, paymentInfo, { upsert: true });
+    res.send({ message: 'Informações de pagamento atualizadas com sucesso!' });
+  } catch (error) {
+    res.status(500).send({ message: 'Erro ao atualizar informações de pagamento', error });
+  }
+});
+
+// Use o roteador para todas as rotas da API
+app.use('/api', apiRouter);
+
 // Redireciona todas as requisições que não sejam da API para o index.html
 app.get('*', (req, res) => {
   if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {

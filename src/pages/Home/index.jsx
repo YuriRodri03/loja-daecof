@@ -3,6 +3,7 @@ import Logo from '../../assets/logoda.png';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import axios from 'axios';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; 
 
 function Home() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Home() {
     senha: ''
   });
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -57,7 +59,22 @@ function Home() {
           <option value='Economia'>Economia</option>
           <option value='Finanças'>Finanças</option>
         </select>
-        <input placeholder='Senha' name='senha' type='password' onChange={handleChange} onBlur={handleBlur} />
+        <div className="password-container">
+          <input
+            placeholder='Senha'
+            name='senha'
+            type={showPassword ? 'text' : 'password'} // Alterna entre texto e senha
+            onChange={handleChange}
+            onBlur={handleBlur}
+          />
+          <button
+            type="button"
+            className="toggle-password"
+            onClick={() => setShowPassword(!showPassword)} // Alterna o estado
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Ícone de olho */}
+          </button>
+        </div>
         <button type='button' onClick={handleSubmit}>Cadastrar</button>
         <button type='button' onClick={() => navigate('/login')}>Já tenho login</button>
       </form>

@@ -58,3 +58,9 @@ form select {
   color: red;
   margin-bottom: 10px;
 }
+
+.logo {
+  width: 150px; /* Define a largura da logo */
+  height: auto; /* Mantém a proporção da imagem */
+  margin-bottom: 20px; /* Adiciona um espaço abaixo da logo */
+}

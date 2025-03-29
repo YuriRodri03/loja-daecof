@@ -50,3 +50,37 @@ form {
     outline: none;
   }
 }
+
+form input:focus {
+  border-color: #888AE1; /* Altera a cor da borda ao focar */
+  box-shadow: 0 0 5px rgba(136, 138, 225, 0.5); /* Adiciona um efeito de sombra */
+  background-color: #2E2D4E; /* Altera o fundo ao focar */
+  color: #fff; /* Garante que o texto continue visível */
+}
+
+.logo {
+  width: 150px; /* Define a largura da logo */
+  height: auto; /* Mantém a proporção da imagem */
+  margin-bottom: 20px; /* Adiciona um espaço abaixo da logo */
+}
+
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px; /* Espaço para o botão */
+}
+
+.password-container .toggle-password {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888AE1;
+  font-size: 18px;
+}

@@ -108,4 +108,5 @@ form input:focus {
   height: 30px; /* Ajusta a altura do botão */
   width: 30px; /* Ajusta a largura do botão */
   padding: 0; /* Remove o preenchimento interno */
+  line-height: 1; /* Garante que o ícone esteja centralizado */
 }

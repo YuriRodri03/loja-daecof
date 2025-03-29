@@ -110,6 +110,11 @@ form select:focus {
   cursor: pointer;
   color: #888AE1;
   font-size: 18px;
+  z-index: 2; /* Garante que o botão fique acima do campo */
   display: flex;
   align-items: center;
+  justify-content: center;
+  height: 30px; /* Ajusta a altura do botão */
+  width: 30px; /* Ajusta a largura do botão */
+  padding: 0; /* Remove o preenchimento interno */
 }

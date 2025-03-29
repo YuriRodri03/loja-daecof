@@ -5,6 +5,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 const ExcelJS = require('exceljs'); 
 require('dotenv').config();
 
@@ -16,10 +17,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Permite envio de cookies, se necessário
 }));
+
 // Configura o body-parser para aceitar tamanhos maiores
 app.use(bodyParser.json({ limit: '10mb' })); // Aumenta o limite para 10MB
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
-
 
 // Conexão com o MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -134,6 +135,8 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ email, senha });
 
     if (user) {
+       // Gera o token JWT
+       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
       res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
     } else {
       res.status(401).send({ message: 'Email ou senha inválidos!' });
@@ -153,11 +156,26 @@ app.get('/users', async (req, res) => {
   }
 });
 
+// Middleware de autenticação
+const authenticate = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Extrai o token do cabeçalho Authorization
+  if (!token) {
+    return res.status(401).send({ message: 'Token não fornecido.' });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifica o token
+    req.userId = decoded.id; // Adiciona o userId ao req
+    next();
+  } catch (error) {
+    res.status(401).send({ message: 'Token inválido.' });
+  }
+};
+
 // Endpoint para obter os dados do usuário logado
 app.get('/user/profile', authenticate, async (req, res) => {
+  const { email } = req.query; // O email é enviado como um parâmetro de consulta
   try {
-    const userId = req.userId; // Supondo que o middleware de autenticação já adiciona o userId ao req
-    const user = await User.findById(userId);
+    const user = await User.findById(req.userId); // Busca o usuário pelo ID extraído do token
 
     if (!user) {
       return res.status(404).send({ message: 'Usuário não encontrado.' });
@@ -177,7 +195,7 @@ app.get('/user/profile', authenticate, async (req, res) => {
 
 // Rota para salvar pedidos
 app.post('/create-order', async (req, res) => {
-  const { items, proofOfPayment, date, userEmail, userPhone, userCourse } = req.body;
+  const { items, proofOfPayment, date, userName, userEmail, userPhone, userCourse } = req.body;
 
   try {
     const newOrder = new Order({
@@ -366,9 +384,9 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     }
 
     // Valida os dados enviados pelo frontend
-    const { userEmail, userPhone, userCourse, items } = req.body;
+    const {userName, userEmail, userPhone, userCourse, items } = req.body;
 
-    if (!userEmail || !userPhone || !userCourse || !items) {
+    if (!userName, userEmail || !userPhone || !userCourse || !items) {
       return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
     }
 
@@ -376,6 +394,7 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const newOrder = new Order({
       proofOfPayment: file.filename, // Nome do arquivo salvo
       date: new Date().toISOString(), // Data atual
+      userName,
       userEmail,
       userPhone,
       userCourse,

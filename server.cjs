@@ -395,7 +395,6 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const newOrder = new Order({
       proofOfPayment: file.filename, // Nome do arquivo salvo
       date: new Date().toISOString(), // Data atual
-      userName,
       userEmail,
       userPhone,
       userCourse,

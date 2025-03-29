@@ -342,14 +342,21 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
       return res.status(400).send({ message: 'Nenhum arquivo enviado.' });
     }
 
-    // Salva o comprovante no banco de dados (opcional)
+    // Valida os dados enviados pelo frontend
+    const { userEmail, userPhone, userCourse, items } = req.body;
+
+    if (!userEmail || !userPhone || !userCourse || !items) {
+      return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
+    }
+
+    // Salva o pedido no banco de dados
     const newOrder = new Order({
       proofOfPayment: file.filename, // Nome do arquivo salvo
       date: new Date().toISOString(), // Data atual
-      userEmail: req.body.userEmail || 'email@example.com', // Exemplo de dados adicionais
-      userPhone: req.body.userPhone || '123456789',
-      userCourse: req.body.userCourse || 'Curso',
-      items: req.body.items ? JSON.parse(req.body.items) : [], // Converte itens enviados como JSON
+      userEmail,
+      userPhone,
+      userCourse,
+      items: JSON.parse(items), // Converte os itens de JSON para um array
     });
 
     await newOrder.save();

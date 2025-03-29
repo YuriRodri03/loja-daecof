@@ -93,13 +93,14 @@ form input:focus {
 
 .password-container .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 10px; /* Posiciona o botão no lado direito do campo */
+  top: 50%; /* Centraliza verticalmente */
+  transform: translateY(-50%); /* Ajusta o alinhamento vertical */
   background: none;
   border: none;
   cursor: pointer;
   color: #888AE1;
   font-size: 18px;
-  height: 100%; /* Garante que o botão ocupe a altura do campo */
   display: flex;
   align-items: center;
   justify-content: center;

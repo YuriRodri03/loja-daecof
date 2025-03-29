@@ -165,7 +165,7 @@ function Admin() {
       }
   
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/orders/export`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/export`, {
           params: { start: startDate, end: endDate },
           responseType: 'blob', // Para lidar com o arquivo Excel
         });

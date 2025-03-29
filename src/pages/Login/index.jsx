@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Biblioteca de ícones
+import jwtDecode from 'jwt-decode';
 import Logo from '../../assets/logoda.png';
 import axios from 'axios';
 import './style.css';
@@ -14,11 +15,16 @@ function Login() {
   const handleLogin = async () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/login`, { email, senha }); // Usa a URL do backend do .env
-      const { isAdmin } = response.data;
+      const { token } = response.data; // a const era isAdmin.
 
-      // Salva o estado de admin no localStorage
-      localStorage.setItem('isAdmin', isAdmin);
+      // Salva o token JWT no localStorage
+      localStorage.setItem('token', token);
 
+      // Decodifica o token para verificar se o usuário é admin
+      const decodedToken = jwtDecode(token);
+      const isAdmin = decodedToken.isAdmin;
+
+      // Redireciona com base no tipo de usuário
       if (isAdmin) {
         navigate('/admin'); // Redireciona para a página de admin
       } else {

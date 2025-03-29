@@ -153,25 +153,6 @@ app.get('/users', async (req, res) => {
   }
 });
 
-const jwt = require('jsonwebtoken');
-
-// Middleware para autenticação
-const authenticate = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Extrai o token do cabeçalho Authorization
-
-  if (!token) {
-    return res.status(401).send({ message: 'Token não fornecido.' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifica o token
-    req.userId = decoded.id; // Adiciona o userId ao req
-    next();
-  } catch (error) {
-    res.status(401).send({ message: 'Token inválido.' });
-  }
-};
-
 // Endpoint para obter os dados do usuário logado
 app.get('/user/profile', authenticate, async (req, res) => {
   try {

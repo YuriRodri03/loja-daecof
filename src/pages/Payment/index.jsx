@@ -12,7 +12,11 @@ function Payment() {
   // Função para buscar informações de pagamento
   const fetchPaymentInfo = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/payment`);
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/payment`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
+        },
+      });
       setPaymentInfo(response.data || {});
     } catch (error) {
       console.error('Erro ao buscar informações de pagamento:', error);
@@ -24,12 +28,14 @@ function Payment() {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token de autenticação
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
         },
       });
       setUserInfo(response.data || {});
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error);
+      alert('Erro ao autenticar. Faça login novamente.');
+      navigate('/login'); // Redireciona para o login em caso de erro
     }
   };
 
@@ -60,7 +66,7 @@ function Payment() {
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token de autenticação
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
         },
       });
 

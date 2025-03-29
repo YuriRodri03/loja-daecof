@@ -153,6 +153,28 @@ app.get('/users', async (req, res) => {
   }
 });
 
+// Endpoint para obter os dados do usuário logado
+app.get('/user/profile', async (req, res) => {
+  try {
+    const userId = req.userId; // Supondo que o middleware de autenticação já adiciona o userId ao req
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({ message: 'Usuário não encontrado.' });
+    }
+
+    res.status(200).send({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      course: user.course,
+    });
+  } catch (error) {
+    console.error('Erro ao buscar dados do usuário:', error);
+    res.status(500).send({ message: 'Erro ao buscar dados do usuário.' });
+  }
+});
+
 // Rota para salvar pedidos
 app.post('/create-order', async (req, res) => {
   const { items, proofOfPayment, date, userEmail, userPhone, userCourse } = req.body;

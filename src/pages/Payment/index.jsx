@@ -6,20 +6,36 @@ import './style.css';
 function Payment() {
   const navigate = useNavigate();
   const [paymentInfo, setPaymentInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({}); // Estado para armazenar os dados do usuário
   const [proof, setProof] = useState(null);
 
   // Função para buscar informações de pagamento
   const fetchPaymentInfo = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/payment`); // Usa a URL do backend do .env
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/payment`);
       setPaymentInfo(response.data || {});
     } catch (error) {
       console.error('Erro ao buscar informações de pagamento:', error);
     }
   };
 
+  // Função para buscar os dados do usuário logado
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/profile`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token de autenticação
+        },
+      });
+      setUserInfo(response.data || {});
+    } catch (error) {
+      console.error('Erro ao buscar dados do usuário:', error);
+    }
+  };
+
   useEffect(() => {
     fetchPaymentInfo();
+    fetchUserInfo(); // Busca os dados do usuário ao carregar a página
   }, []);
 
   const handleFileChange = (event) => {
@@ -35,10 +51,15 @@ function Payment() {
     try {
       const formData = new FormData();
       formData.append('proof', proof);
+      formData.append('userEmail', userInfo.email); // Preenche com os dados do usuário logado
+      formData.append('userPhone', userInfo.phone);
+      formData.append('userCourse', userInfo.course);
+      formData.append('items', JSON.stringify(paymentInfo.items)); // Itens do pedido
 
       await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token de autenticação
         },
       });
 

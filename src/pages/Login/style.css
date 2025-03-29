@@ -11,7 +11,7 @@
 h1 {
   font-size: 28px;
   color: #fff;
-  white-space: nowrap
+  white-space: nowrap;
 }
 
 form {
@@ -24,31 +24,31 @@ form {
   max-width: 70%;
   width: 500px;
   margin-bottom: 20px;
+}
 
-  & button {
-    border-radius: 30px;
-    background-color: #888AE1;
-    height: 40px;
-    border: none;
-    width: 100%; 
-    font-weight: bold;
-  }
+form button {
+  border-radius: 30px;
+  background-color: #888AE1;
+  height: 40px;
+  border: none;
+  width: 100%; 
+  font-weight: bold;
+}
 
-  & button:hover {
-    opacity: 0.8;
-  }
+form button:hover {
+  opacity: 0.8;
+}
 
-  & input {
-    border: 1px solid #48456C;
-    border-radius: 30px;
-    height: 40px;
-    background-color: #363653;
-    color: #fff;
-    font-size: 16px;
-    padding-left: 10px;
-    width: 100%; 
-    outline: none;
-  }
+form input {
+  border: 1px solid #48456C;
+  border-radius: 30px;
+  height: 40px;
+  background-color: #363653;
+  color: #fff;
+  font-size: 16px;
+  padding-left: 10px;
+  width: 100%; 
+  outline: none;
 }
 
 form input:focus {
@@ -68,11 +68,27 @@ form input:focus {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%; /* Garante que o container tenha o mesmo tamanho dos outros campos */
 }
 
 .password-container input {
-  width: 100%;
-  padding-right: 40px; /* Espaço para o botão */
+  width: 100%; /* Garante que o campo de senha ocupe todo o espaço disponível */
+  padding-right: 40px; /* Espaço para o botão de alternar senha */
+  border: 1px solid #48456C;
+  border-radius: 30px;
+  height: 40px;
+  background-color: #363653;
+  color: #fff;
+  font-size: 16px;
+  padding-left: 10px;
+  outline: none;
+}
+
+.password-container input:focus {
+  border-color: #888AE1; /* Altera a cor da borda ao focar */
+  box-shadow: 0 0 5px rgba(136, 138, 225, 0.5); /* Adiciona um efeito de sombra */
+  background-color: #2E2D4E; /* Altera o fundo ao focar */
+  color: #fff; /* Garante que o texto continue visível */
 }
 
 .password-container .toggle-password {
@@ -83,4 +99,8 @@ form input:focus {
   cursor: pointer;
   color: #888AE1;
   font-size: 18px;
+  height: 100%; /* Garante que o botão ocupe a altura do campo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

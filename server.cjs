@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const ExcelJS = require('exceljs'); 
+const ExcelJS = require('exceljs');
 require('dotenv').config();
 
 const app = express();
@@ -153,10 +153,10 @@ app.post('/login', async (req, res) => {
 
     console.log('Senha válida. Gerando token...');
 
-      // Gera o token JWT
-      const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Gera o token JWT
+    const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-      console.log('Token gerado com sucesso.');
+    console.log('Token gerado com sucesso.');
     res.send({ isAdmin: user.isAdmin, token, message: 'Login bem-sucedido!' });
   } catch (error) {
     console.error('Erro ao fazer login:', error);
@@ -402,10 +402,20 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     }
 
     // Valida os dados enviados pelo frontend
-    const {userName, userEmail, userPhone, userCourse, items } = req.body;
+    const { userName, userEmail, userPhone, userCourse, items } = req.body;
 
-    if (!userName, userEmail || !userPhone || !userCourse || !items) {
+    if (!userName || !userEmail || !userPhone || !userCourse || !items) {
+      console.log('Dados incompletos:', { userName, userEmail, userPhone, userCourse, items });
       return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
+    }
+
+    try {
+      const parsedItems = JSON.parse(items); // Verifica se o campo items é um JSON válido
+      if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
+        return res.status(400).send({ message: 'Itens do pedido inválidos.' });
+      }
+    } catch (error) {
+      return res.status(400).send({ message: 'Formato inválido para os itens do pedido.' });
     }
 
     // Salva o pedido no banco de dados

@@ -42,7 +42,7 @@ function Payment() {
   useEffect(() => {
     fetchPaymentInfo();
     fetchUserInfo();
-  
+
     // 🚀 Pegue os itens do carrinho do localStorage
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     setPaymentInfo((prev) => ({ ...prev, items: cartItems }));
@@ -72,58 +72,64 @@ function Payment() {
       formData.append('userCourse', userInfo.course);
       formData.append('items', JSON.stringify(paymentInfo.items)); // Itens do pedido
 
+      // Enviar para o servidor
+      fetch('/payment/proof', {
+        method: 'POST',
+        body: formData
+      });
+
       // Log para verificar os dados enviados
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value);
       }
 
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
-          },
-        });
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
+        },
+      });
 
-        alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
-        navigate('/products');
-      } catch (error) {
-        console.error('Erro ao enviar comprovante de pagamento:', error);
-        alert('Erro ao processar o pagamento. Tente novamente.');
-      }
-    };
+      alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
+      navigate('/products');
+    } catch (error) {
+      console.error('Erro ao enviar comprovante de pagamento:', error);
+      alert('Erro ao processar o pagamento. Tente novamente.');
+    }
+  };
 
-    return (
-      <div className="Container">
-        <h1>Pagamento</h1>
-        <div className="PaymentOptions">
-          <div className="PixPayment">
-            <h2>Pagamento via PIX</h2>
-            <p>Chave PIX: <strong>{paymentInfo.pixKey}</strong></p>
-            <p>Nome: <strong>{paymentInfo.name}</strong></p>
-            <p>Banco: <strong>{paymentInfo.institution}</strong></p>
-            {paymentInfo.qrCode && <img src={paymentInfo.qrCode} alt="QR Code para pagamento" className="QRCode" />}
-          </div>
-          <div className="CardPayment">
-            <h2>Pagamento com Cartão</h2>
-            {paymentInfo.links?.map((link, index) => (
-              <p key={index}>
-                <strong>{index + 1} unidade{index > 0 ? 's' : ''}:</strong>{' '}
-                <a href={link} target="_blank" rel="noopener noreferrer">
-                  {link}
-                </a>
-              </p>
-            ))}
-          </div>
+  return (
+    <div className="Container">
+      <h1>Pagamento</h1>
+      <div className="PaymentOptions">
+        <div className="PixPayment">
+          <h2>Pagamento via PIX</h2>
+          <p>Chave PIX: <strong>{paymentInfo.pixKey}</strong></p>
+          <p>Nome: <strong>{paymentInfo.name}</strong></p>
+          <p>Banco: <strong>{paymentInfo.institution}</strong></p>
+          {paymentInfo.qrCode && <img src={paymentInfo.qrCode} alt="QR Code para pagamento" className="QRCode" />}
         </div>
-        <div className="ProofUpload">
-          <h2>Anexar Comprovante</h2>
-          <input type="file" accept="image/*,application/pdf" onChange={handleFileChange} />
+        <div className="CardPayment">
+          <h2>Pagamento com Cartão</h2>
+          {paymentInfo.links?.map((link, index) => (
+            <p key={index}>
+              <strong>{index + 1} unidade{index > 0 ? 's' : ''}:</strong>{' '}
+              <a href={link} target="_blank" rel="noopener noreferrer">
+                {link}
+              </a>
+            </p>
+          ))}
         </div>
-        <button className="PaymentButton" onClick={handlePayment}>
-          Finalizar Compra
-        </button>
       </div>
-    );
-  }
+      <div className="ProofUpload">
+        <h2>Anexar Comprovante</h2>
+        <input type="file" accept="image/*,application/pdf" onChange={handleFileChange} />
+      </div>
+      <button className="PaymentButton" onClick={handlePayment}>
+        Finalizar Compra
+      </button>
+    </div>
+  );
+}
 
-  export default Payment;
+export default Payment;

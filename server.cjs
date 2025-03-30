@@ -398,12 +398,15 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const file = req.file;
 
     if (!file) {
+      console.log('Nenhum arquivo enviado.');
       return res.status(400).send({ message: 'Nenhum arquivo enviado.' });
     }
 
     // Valida os dados enviados pelo frontend
     const { userName, userEmail, userPhone, userCourse, items } = req.body;
 
+    console.log('Dados recebidos:', { userName, userEmail, userPhone, userCourse, items });
+    
     if (!userName || !userEmail || !userPhone || !userCourse || !items) {
       console.log('Dados incompletos:', { userName, userEmail, userPhone, userCourse, items });
       return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
@@ -415,6 +418,7 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
         return res.status(400).send({ message: 'Itens do pedido inválidos.' });
       }
     } catch (error) {
+      console.log('Erro ao analisar o campo items:', error);
       return res.status(400).send({ message: 'Formato inválido para os itens do pedido.' });
     }
 

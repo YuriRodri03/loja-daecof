@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style.css';
 
@@ -8,16 +8,17 @@ function Cart() {
     JSON.parse(localStorage.getItem('cart')) || [] // Carrega o carrinho do localStorage
   );
 
+  // Função para remover item do carrinho
   const handleRemoveItem = (index) => {
-    const updatedCart = [...cart];
-    updatedCart.splice(index, 1); // Remove o item pelo índice
+    const updatedCart = cart.filter((_, i) => i !== index); // Remove o item pelo índice
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart)); // Atualiza o localStorage
-
-    const calculateTotal = () => {
-      return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    };
   };
+
+  // Calcula o total dinamicamente sempre que o carrinho for atualizado
+  const total = useMemo(() => {
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }, [cart]);
 
   return (
     <div className='Container'>
@@ -38,15 +39,16 @@ function Cart() {
                   <p><strong>Tamanho:</strong> {item.size}</p>
                   <p><strong>Gênero:</strong> {item.gender}</p>
                   <p><strong>Quantidade:</strong> {item.quantity}</p>
+                  <p><strong>Preço:</strong> R$ {item.price.toFixed(2)}</p>
                 </div>
-                <button
-                  className='RemoveButton'
-                  onClick={() => handleRemoveItem(index)}
-                >
+                <button className='RemoveButton' onClick={() => handleRemoveItem(index)}>
                   Remover
                 </button>
               </div>
             ))}
+          </div>
+          <div className='CartSummary'>
+            <h2>Total: R$ {total.toFixed(2)}</h2>
           </div>
           <div className='CartActions'>
             <button className='AddMoreButton' onClick={() => navigate('/products')}>

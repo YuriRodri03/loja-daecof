@@ -41,7 +41,11 @@ function Payment() {
 
   useEffect(() => {
     fetchPaymentInfo();
-    fetchUserInfo(); // Busca os dados do usuário ao carregar a página
+    fetchUserInfo();
+  
+    // 🚀 Pegue os itens do carrinho do localStorage
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    setPaymentInfo((prev) => ({ ...prev, items: cartItems }));
   }, []);
 
   useEffect(() => {

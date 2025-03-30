@@ -42,7 +42,10 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB
+});
 
 // Schema e modelo do usuário
 const UserSchema = new mongoose.Schema({
@@ -406,7 +409,7 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const { userName, userEmail, userPhone, userCourse, items } = req.body;
 
     console.log('Dados recebidos:', { userName, userEmail, userPhone, userCourse, items });
-    
+
     if (!userName || !userEmail || !userPhone || !userCourse || !items) {
       console.log('Dados incompletos:', { userName, userEmail, userPhone, userCourse, items });
       return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
@@ -426,10 +429,10 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     const newOrder = new Order({
       proofOfPayment: file.filename, // Nome do arquivo salvo
       date: new Date().toISOString(), // Data atual
-      userName,
-      userEmail,
-      userPhone,
-      userCourse,
+      userName: userName,
+      userEmail: userEmail,
+      userPhone: userPhone,
+      userCourse: userCourse,
       items: JSON.parse(items), // Converte os itens de JSON para um array
     });
 

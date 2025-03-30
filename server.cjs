@@ -136,18 +136,30 @@ app.post('/login', async (req, res) => {
   const { email, senha } = req.body;
 
   try {
+    console.log('Tentando encontrar o usuário com email:', email);
     const user = await User.findOne({ email });
 
-    
-    if (user && bcrypt.compareSync(senha, user.senha)) {
+    if (!user) {
+      console.log('Usuário não encontrado.');
+      return res.status(401).send({ message: 'Email ou senha inválidos!' });
+    }
+
+    console.log('Usuário encontrado:', user);
+
+    if (!bcrypt.compareSync(senha, user.senha)) {
+      console.log('Senha inválida.');
+      return res.status(401).send({ message: 'Email ou senha inválidos!' });
+    }
+
+    console.log('Senha válida. Gerando token...');
+
       // Gera o token JWT
       const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-      res.send({ isAdmin: user.isAdmin, message: 'Login bem-sucedido!' });
-    } else {
-      res.status(401).send({ message: 'Email ou senha inválidos!' });
-    }
+      console.log('Token gerado com sucesso.');
+    res.send({ isAdmin: user.isAdmin, token, message: 'Login bem-sucedido!' });
   } catch (error) {
+    console.error('Erro ao fazer login:', error);
     res.status(500).send({ message: 'Erro ao fazer login', error });
   }
 });

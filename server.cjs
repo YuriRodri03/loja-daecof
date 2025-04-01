@@ -61,20 +61,23 @@ const User = mongoose.model('User', UserSchema);
 
 // Schema e modelo para pedidos
 const OrderSchema = new mongoose.Schema({
-  items: [
-    {
-      name: String,
+  items: {
+    type: [{
+      name: { type: String, required: true },
       size: String,
       gender: String,
-      quantity: Number,
-      price: Number,
-    },
-  ],
-  userEmail: String, // Email do usuário que fez o pedido
-  userPhone: String, // Telefone do usuário
-  userCourse: String, // Curso do usuário
-  proofOfPayment: String, // Nome do arquivo anexado
-  date: String,
+      quantity: { type: Number, required: true, min: 1 },
+      price: { type: Number, required: true, min: 0 }
+    }],
+    required: true,
+    validate: [array => array.length > 0, 'O pedido deve conter pelo menos um item']
+  },
+  userEmail: { type: String, required: true, match: /.+\@.+\..+/ },
+  userPhone: String,
+  userCourse: String,
+  proofOfPayment: { type: String, required: true },
+  date: { type: String, default: () => new Date().toISOString() },
+  total: { type: Number, required: true, min: 0 }
 });
 
 const Order = mongoose.model('Order', OrderSchema);
@@ -203,10 +206,10 @@ app.get('/user/profile', authenticate, async (req, res) => {
     }
 
     res.status(200).send({
-      name: user.name,
+      nome: user.nome,
       email: user.email,
-      phone: user.phone,
-      course: user.course,
+      telefone: user.telefone,
+      curso: user.curso,
     });
   } catch (error) {
     console.error('Erro ao buscar dados do usuário:', error);
@@ -399,49 +402,57 @@ app.get('/orders/export', async (req, res) => {
 app.post('/payment/proof', upload.single('proof'), async (req, res) => {
   try {
     const file = req.file;
-
     if (!file) {
-      console.log('Nenhum arquivo enviado.');
-      return res.status(400).send({ message: 'Nenhum arquivo enviado.' });
+      return res.status(400).send({ message: 'Nenhum arquivo de comprovante enviado.' });
     }
 
-    // Valida os dados enviados pelo frontend
+    // Extrai e valida dados
     const { userName, userEmail, userPhone, userCourse, items } = req.body;
-
-    console.log('Dados recebidos:', { userName, userEmail, userPhone, userCourse, items });
-
-    if (!userName || !userEmail || !userPhone || !userCourse || !items) {
-      console.log('Dados incompletos:', { userName, userEmail, userPhone, userCourse, items });
-      return res.status(400).send({ message: 'Dados incompletos. Verifique as informações enviadas.' });
+    
+    // Verifica campos obrigatórios
+    if (!userEmail || !items) {
+      return res.status(400).send({ 
+        message: 'Dados incompletos. Email e itens são obrigatórios.',
+        requiredFields: ['userEmail', 'items']
+      });
     }
 
+    // Parse dos itens com tratamento de erro
+    let parsedItems;
     try {
-      const parsedItems = JSON.parse(items); // Verifica se o campo items é um JSON válido
-      if (!Array.isArray(parsedItems) || parsedItems.length === 0) {
-        return res.status(400).send({ message: 'Itens do pedido inválidos.' });
+      parsedItems = JSON.parse(items);
+      if (!Array.isArray(parsedItems?.items) || parsedItems.items.length === 0) {
+        return res.status(400).send({ message: 'Lista de itens inválida ou vazia.' });
       }
-    } catch (error) {
-      console.log('Erro ao analisar o campo items:', error);
+    } catch (e) {
       return res.status(400).send({ message: 'Formato inválido para os itens do pedido.' });
     }
 
-    // Salva o pedido no banco de dados
+    // Cria e salva o pedido
     const newOrder = new Order({
-      proofOfPayment: file.filename, // Nome do arquivo salvo
-      date: new Date().toISOString(), // Data atual
-      userName: userName,
-      userEmail: userEmail,
-      userPhone: userPhone,
-      userCourse: userCourse,
-      items: JSON.parse(items), // Converte os itens de JSON para um array
+      proofOfPayment: file.filename,
+      date: new Date().toISOString(),
+      userName: userName || '',
+      userEmail,
+      userPhone: userPhone || '',
+      userCourse: userCourse || '',
+      items: parsedItems.items,
+      total: parsedItems.total || 0
     });
 
     await newOrder.save();
 
-    res.status(200).send({ message: 'Comprovante enviado com sucesso!', file });
+    res.status(201).send({ 
+      message: 'Pedido registrado com sucesso!',
+      orderId: newOrder._id,
+      proof: file.filename
+    });
   } catch (error) {
-    console.error('Erro ao processar o comprovante:', error);
-    res.status(500).send({ message: 'Erro ao processar o comprovante.', error });
+    console.error('Erro ao processar pedido:', error);
+    res.status(500).send({ 
+      message: 'Erro interno ao processar pedido.',
+      error: error.message
+    });
   }
 });
 

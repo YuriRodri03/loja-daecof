@@ -121,22 +121,26 @@ function Payment() {
         </div>
         <div className="CardPayment">
           <h2>Pagamento com Cartão</h2>
-          {paymentInfo.links?.map((link, index) => (
-            <p key={index}>
-              <strong>{index + 1} unidade{index > 0 ? 's' : ''}:</strong>{' '}
-              <a href={link} target="_blank" rel="noopener noreferrer">
-                {link}
-              </a>
-            </p>
-          ))}
+          {paymentInfo?.links && Array.isArray(paymentInfo.links) ? (
+            paymentInfo.links.map((link, index) => (
+              <p key={index}>
+                <strong>{index + 1} unidade{index > 0 ? 's' : ''}:</strong>{' '}
+                <a href={link} target="_blank" rel="noopener noreferrer">
+                  {link}
+                </a>
+              </p>
+            ))
+          ) : (
+            <p>Nenhum link de pagamento disponível no momento.</p>
+          )}
         </div>
       </div>
       <div className="ProofUpload">
         <h2>Anexar Comprovante</h2>
-        <input 
-          type="file" 
-          accept="image/*,application/pdf" 
-          onChange={handleFileChange} 
+        <input
+          type="file"
+          accept="image/*,application/pdf"
+          onChange={handleFileChange}
           required
         />
         <p className="file-info">
@@ -145,16 +149,22 @@ function Payment() {
       </div>
       <div className="OrderSummary">
         <h3>Resumo do Pedido</h3>
-        <ul>
-          {cartItems.map((item, index) => (
-            <li key={index}>
-              {item.name} - {item.quantity}x R$ {item.price.toFixed(2)}
-            </li>
-          ))}
-        </ul>
-        <p className="total">
-          Total: R$ {cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
-        </p>
+        {cartItems && cartItems.length > 0 ? (
+          <>
+            <ul>
+              {cartItems.map((item, index) => (
+                <li key={index}>
+                  {item.name} - {item.quantity}x R$ {item.price.toFixed(2)}
+                </li>
+              ))}
+            </ul>
+            <p className="total">
+              Total: R$ {cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
+            </p>
+          </>
+        ) : (
+          <p>Nenhum item no carrinho</p>
+        )}
       </div>
       <button className="PaymentButton" onClick={handlePayment}>
         Finalizar Compra

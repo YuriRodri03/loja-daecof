@@ -8,6 +8,7 @@ function Payment() {
   const [paymentInfo, setPaymentInfo] = useState({});
   const [userInfo, setUserInfo] = useState({}); // Estado para armazenar os dados do usuário
   const [proof, setProof] = useState(null);
+  const [cartItems, setCartItems] = useState();
 
   // Função para buscar informações de pagamento
   const fetchPaymentInfo = async () => {
@@ -28,10 +29,16 @@ function Payment() {
     try {
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      setUserInfo(response.data || {});
+      // Garante que os campos terão valor mesmo se vierem undefined do backend
+      setUserInfo({
+        name: response.data?.name || '',
+        email: response.data?.email || '',
+        phone: response.data?.phone || '',
+        course: response.data?.course || ''
+      });
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error);
       alert('Erro ao autenticar. Faça login novamente.');
@@ -44,14 +51,9 @@ function Payment() {
     fetchUserInfo();
 
     // 🚀 Pegue os itens do carrinho do localStorage
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    setPaymentInfo((prev) => ({ ...prev, items: cartItems }));
+    const items = JSON.parse(localStorage.getItem('cart')) || [];
+    setCartItems(items);
   }, []);
-
-  useEffect(() => {
-    console.log('Dados do usuário:', userInfo);
-    console.log('Informações de pagamento:', paymentInfo);
-  }, [userInfo, paymentInfo]);
 
   const handleFileChange = (event) => {
     setProof(event.target.files[0]);
@@ -70,7 +72,7 @@ function Payment() {
       formData.append('userEmail', userInfo.email); // Preenche com os dados do usuário logado
       formData.append('userPhone', userInfo.phone);
       formData.append('userCourse', userInfo.course);
-      formData.append('items', JSON.stringify(paymentInfo.items)); // Itens do pedido
+      formData.append('items', JSON.stringify(cartItems)); // Itens do pedido
 
       // Enviar para o servidor
       fetch('/payment/proof', {
@@ -79,22 +81,30 @@ function Payment() {
       });
 
       // Log para verificar os dados enviados
+      console.log('Dados sendo enviados:');
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        console.log(key, value);
       }
 
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/payment/proof`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Envia o token JWT
-        },
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/payment/proof`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
 
-      alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
-      navigate('/products');
+      if (response.status === 200) {
+        alert('Pagamento realizado com sucesso! Seu pedido foi registrado.');
+        localStorage.removeItem('cart'); // Limpa o carrinho após sucesso
+        navigate('/products'); // Redireciona para página de confirmação
+      }
     } catch (error) {
-      console.error('Erro ao enviar comprovante de pagamento:', error);
-      alert('Erro ao processar o pagamento. Tente novamente.');
+      console.error('Erro ao enviar comprovante:', error.response?.data || error.message);
+      alert(`Erro ao processar pagamento: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -123,7 +133,28 @@ function Payment() {
       </div>
       <div className="ProofUpload">
         <h2>Anexar Comprovante</h2>
-        <input type="file" accept="image/*,application/pdf" onChange={handleFileChange} />
+        <input 
+          type="file" 
+          accept="image/*,application/pdf" 
+          onChange={handleFileChange} 
+          required
+        />
+        <p className="file-info">
+          {proof ? `Arquivo selecionado: ${proof.name}` : 'Nenhum arquivo selecionado'}
+        </p>
+      </div>
+      <div className="OrderSummary">
+        <h3>Resumo do Pedido</h3>
+        <ul>
+          {cartItems.map((item, index) => (
+            <li key={index}>
+              {item.name} - {item.quantity}x R$ {item.price.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+        <p className="total">
+          Total: R$ {cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
+        </p>
       </div>
       <button className="PaymentButton" onClick={handlePayment}>
         Finalizar Compra

@@ -115,30 +115,22 @@ function Payment() {
 
     try {
       const formData = new FormData();
-      formData.append('proof', proof);
+      formData.append('proof', proof, proof.name); // Adicione o filename
       
-      // Adiciona todos os campos do usuário com fallback para string vazia
-      formData.append('userName', userInfo.name || '');
-      formData.append('userEmail', userInfo.email || '');
-      formData.append('userPhone', userInfo.phone || '');
-      formData.append('userCourse', userInfo.course || '');
+      // Use os nomes de campos que o backend espera
+      formData.append('nome', userInfo.name || '');
+      formData.append('email', userInfo.email || '');
+      formData.append('telefone', userInfo.phone || '');
+      formData.append('curso', userInfo.course || '');
       
-      // Envia os itens em uma estrutura mais robusta
-      formData.append('items', JSON.stringify({
-        items: cartItems,
-        total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-        count: cartItems.length
-      }));
-
-      // Debug: verificar dados que serão enviados
-      console.log('Dados do pedido sendo enviados:', {
-        userName: userInfo.name,
-        userEmail: userInfo.email,
-        userPhone: userInfo.phone,
-        userCourse: userInfo.course,
-        items: cartItems
-      });
-
+      // Envie apenas o array de itens diretamente
+      formData.append('items', JSON.stringify(cartItems));
+  
+      // DEBUG: Verifique o FormData antes de enviar
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+  
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/payment/proof`,
         formData,
@@ -147,7 +139,6 @@ function Payment() {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
-          timeout: 30000 // 30 segundos de timeout
         }
       );
 

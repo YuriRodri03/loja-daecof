@@ -20,7 +20,7 @@ app.use(cors({
 }));
 
 // Configura o body-parser para aceitar tamanhos maiores
-app.use(bodyParser.json({ limit: '10mb' })); // Aumenta o limite para 10MB
+app.use(bodyParser.json({ limit: '10mb' })); 
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Conexão com o MongoDB
@@ -401,57 +401,51 @@ app.get('/orders/export', async (req, res) => {
 // Endpoint para receber o comprovante de pagamento
 app.post('/payment/proof', upload.single('proof'), async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).send({ message: 'Nenhum arquivo de comprovante enviado.' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'Nenhum comprovante enviado' });
     }
 
-    // Extrai e valida dados
-    const { userName, userEmail, userPhone, userCourse, items } = req.body;
-    
-    // Verifica campos obrigatórios
-    if (!userEmail || !items) {
-      return res.status(400).send({ 
-        message: 'Dados incompletos. Email e itens são obrigatórios.',
-        requiredFields: ['userEmail', 'items']
-      });
+    // Extrai os campos do FormData
+    const { nome, email, telefone, curso, items } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email é obrigatório' });
     }
 
-    // Parse dos itens com tratamento de erro
     let parsedItems;
     try {
       parsedItems = JSON.parse(items);
-      if (!Array.isArray(parsedItems?.items) || parsedItems.items.length === 0) {
-        return res.status(400).send({ message: 'Lista de itens inválida ou vazia.' });
+      if (!Array.isArray(parsedItems)) {
+        return res.status(400).json({ message: 'Itens devem ser um array' });
       }
     } catch (e) {
-      return res.status(400).send({ message: 'Formato inválido para os itens do pedido.' });
+      return res.status(400).json({ message: 'Formato inválido para itens' });
     }
 
-    // Cria e salva o pedido
+    // Cria o pedido com os campos corretos
     const newOrder = new Order({
-      proofOfPayment: file.filename,
+      proofOfPayment: req.file.filename,
       date: new Date().toISOString(),
-      userName: userName || '',
-      userEmail,
-      userPhone: userPhone || '',
-      userCourse: userCourse || '',
-      items: parsedItems.items,
-      total: parsedItems.total || 0
+      userName: nome || '',
+      userEmail: email,
+      userPhone: telefone || '',
+      userCourse: curso || '',
+      items: parsedItems,
+      total: parsedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
     });
 
     await newOrder.save();
-
-    res.status(201).send({ 
-      message: 'Pedido registrado com sucesso!',
-      orderId: newOrder._id,
-      proof: file.filename
+    
+    res.status(201).json({ 
+      message: 'Pedido criado com sucesso',
+      orderId: newOrder._id
     });
+
   } catch (error) {
-    console.error('Erro ao processar pedido:', error);
-    res.status(500).send({ 
-      message: 'Erro interno ao processar pedido.',
-      error: error.message
+    console.error('Erro:', error);
+    res.status(500).json({ 
+      message: 'Erro no servidor',
+      error: error.message 
     });
   }
 });

@@ -76,7 +76,7 @@ const OrderSchema = new mongoose.Schema({
   userPhone: String,
   userCourse: String,
   proofOfPayment: { type: String, required: true },
-  date: { type: String, default: () => new Date().toISOString() },
+  date: { type: Date, default: Date.now },
   total: { type: Number, required: true, min: 0 }
 });
 
@@ -223,7 +223,7 @@ app.post('/create-order', async (req, res) => {
 
   try {
     const newOrder = new Order({
-      date,
+      date: new Date(),
       userName,
       userEmail,
       userPhone,
@@ -382,7 +382,13 @@ app.get('/orders/export', authenticate, async (req, res) => {
     console.log(`Pedidos encontrados: ${orders.length}`); // DEBUG
     
     if (orders.length === 0) {
-      return res.status(404).send({ message: 'Nenhum pedido encontrado no período especificado' });
+      // Verificação adicional para ver se há pedidos no banco
+      const totalOrders = await Order.countDocuments({});
+      return res.status(404).json({ 
+        message: 'Nenhum pedido encontrado no período especificado',
+        totalOrdersInDB: totalOrders,
+        suggestion: totalOrders > 0 ? 'Verifique o intervalo de datas' : 'Nenhum pedido encontrado no banco de dados'
+      });
     }
 
     const workbook = new ExcelJS.Workbook();

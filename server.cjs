@@ -353,25 +353,34 @@ app.get('/payment', async (req, res) => {
 });
 
 // Rota para exportar pedidos para Excel
-app.get('/orders/export', async (req, res) => {
-  const { start, end } = req.query;
-
+app.get('/orders/export', authenticate, async (req, res) => {
   try {
-    // Converta as strings de data para objetos Date
+    const { start, end } = req.query;
+    
+    console.log('Datas recebidas:', start, end); // DEBUG
+
+    // Validação das datas
+    if (!start || !end) {
+      return res.status(400).send({ message: 'Datas de início e fim são obrigatórias' });
+    }
+
     const startDate = new Date(start);
     const endDate = new Date(end);
-    endDate.setHours(23, 59, 59, 999); // Inclui todo o dia final
+    
+    // Ajusta para incluir todo o dia final
+    endDate.setHours(23, 59, 59, 999);
 
-    // Verifique a consulta ao banco de dados
+    console.log('Consultando pedidos entre:', startDate, 'e', endDate); // DEBUG
+
     const orders = await Order.find({
-      date: {
-        $gte: startDate,
-        $lte: endDate
+      date: { 
+        $gte: startDate, 
+        $lte: endDate 
       }
     }).lean();
 
-    console.log(`Encontrados ${orders.length} pedidos no período`);
-
+    console.log(`Pedidos encontrados: ${orders.length}`); // DEBUG
+    
     if (orders.length === 0) {
       return res.status(404).send({ message: 'Nenhum pedido encontrado no período especificado' });
     }

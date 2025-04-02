@@ -166,8 +166,10 @@ function Admin() {
 
     try {
       // Formate as datas para o padrão ISO (YYYY-MM-DD)
-      const formattedStart = new Date(startDate).toISOString().split('T')[0];
-      const formattedEnd = new Date(endDate).toISOString().split('T')[0];
+      const formattedStart = new Date(startDate).toISOString();
+      const formattedEnd = new Date(endDate).toISOString();
+
+      console.log('Enviando datas:', formattedStart, formattedEnd); // DEBUG
 
       const response = await api.get('/orders/export', {
         params: {

@@ -20,7 +20,7 @@ app.use(cors({
 }));
 
 // Configura o body-parser para aceitar tamanhos maiores
-app.use(bodyParser.json({ limit: '10mb' })); 
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // Conexão com o MongoDB
@@ -357,39 +357,62 @@ app.get('/orders/export', async (req, res) => {
   const { start, end } = req.query;
 
   try {
+    // Converta as strings de data para objetos Date
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    endDate.setHours(23, 59, 59, 999); // Inclui todo o dia final
+
+    // Verifique a consulta ao banco de dados
     const orders = await Order.find({
-      date: { $gte: new Date(start), $lte: new Date(end) },
-    });
+      date: {
+        $gte: startDate,
+        $lte: endDate
+      }
+    }).lean();
+
+    console.log(`Encontrados ${orders.length} pedidos no período`);
+
+    if (orders.length === 0) {
+      return res.status(404).send({ message: 'Nenhum pedido encontrado no período especificado' });
+    }
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Pedidos');
 
     worksheet.columns = [
-      { header: 'Nome do Produto', key: 'name', width: 30 },
-      { header: 'Quantidade', key: 'quantity', width: 15 },
-      { header: 'Preço', key: 'price', width: 15 },
+      { header: 'Data', key: 'date', width: 20 },
+      { header: 'Cliente', key: 'userName', width: 25 },
       { header: 'Email', key: 'userEmail', width: 30 },
       { header: 'Telefone', key: 'userPhone', width: 20 },
       { header: 'Curso', key: 'userCourse', width: 20 },
-      { header: 'Data', key: 'date', width: 20 },
+      { header: 'Produto', key: 'productName', width: 30 },
+      { header: 'Tamanho', key: 'size', width: 15 },
+      { header: 'Quantidade', key: 'quantity', width: 15 },
+      { header: 'Preço Unitário', key: 'price', width: 15 },
+      { header: 'Total', key: 'total', width: 15 },
+      { header: 'Comprovante', key: 'proof', width: 20 }
     ];
 
-    orders.forEach((order) => {
-      order.items.forEach((item) => {
+    orders.forEach(order => {
+      order.items.forEach(item => {
         worksheet.addRow({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
+          date: new Date(order.date).toLocaleString(),
+          userName: order.userName,
           userEmail: order.userEmail,
           userPhone: order.userPhone,
           userCourse: order.userCourse,
-          date: order.date,
+          productName: item.name,
+          size: item.size,
+          quantity: item.quantity,
+          price: item.price,
+          total: item.price * item.quantity,
+          proof: order.proofOfPayment
         });
       });
     });
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=pedidos.xlsx');
+    res.setHeader('Content-Disposition', 'attachment; filename=pedidos_${start}_${end}.xlsx`');
 
     await workbook.xlsx.write(res);
     res.end();
@@ -435,17 +458,17 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
     });
 
     await newOrder.save();
-    
-    res.status(201).json({ 
+
+    res.status(201).json({
       message: 'Pedido criado com sucesso',
       orderId: newOrder._id
     });
 
   } catch (error) {
     console.error('Erro:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Erro no servidor',
-      error: error.message 
+      error: error.message
     });
   }
 });

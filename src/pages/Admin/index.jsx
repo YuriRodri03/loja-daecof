@@ -155,21 +155,31 @@ function Admin() {
     }));
   };
 
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-  
-    const exportOrders = async () => {
-      if (!startDate || !endDate) {
-        alert('Por favor, selecione o período de tempo.');
-        return;
-      }
-  
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/orders/export`, {
-          params: { start: startDate, end: endDate },
-          responseType: 'blob', // Para lidar com o arquivo Excel
-        });
-  
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const exportOrders = async () => {
+    if (!startDate || !endDate) {
+      alert('Por favor, selecione o período de tempo.');
+      return;
+    }
+
+    try {
+      // Formate as datas para o padrão ISO (YYYY-MM-DD)
+      const formattedStart = new Date(startDate).toISOString().split('T')[0];
+      const formattedEnd = new Date(endDate).toISOString().split('T')[0];
+
+      const response = await api.get('/orders/export', {
+        params: {
+          start: formattedStart,
+          end: formattedEnd
+        },
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'is-admin': true
+        }
+      });
 
       // Cria um link para download do arquivo
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -184,7 +194,7 @@ function Admin() {
       alert('Erro ao exportar pedidos. Tente novamente.');
     }
   };
-  
+
   return (
     <div className="AdminContainer">
       <h1>Administração</h1>

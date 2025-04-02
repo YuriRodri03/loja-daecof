@@ -63,7 +63,7 @@ const User = mongoose.model('User', UserSchema);
 const OrderSchema = new mongoose.Schema({
   items: {
     type: [{
-      userName: { type: String, required: true },
+      name: { type: String, required: true },
       size: String,
       gender: String,
       quantity: { type: Number, required: true, min: 1 },
@@ -72,6 +72,7 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     validate: [array => array.length > 0, 'O pedido deve conter pelo menos um item']
   },
+  userName: { type: String, required: true },
   userEmail: { type: String, required: true, match: /.+\@.+\..+/ },
   userPhone: String,
   userCourse: String,

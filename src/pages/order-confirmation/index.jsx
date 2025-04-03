@@ -1,9 +1,11 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import './style.css';
 
 function OrderConfirmation() {
   const { state } = useLocation();
+  const navigate = useNavigate();
   const orderData = state?.orderData || {};
 
   return (

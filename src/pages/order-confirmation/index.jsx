@@ -10,7 +10,7 @@ function OrderConfirmation() {
     <div className="Container">
       <div className="ConfirmationBox">
         <h1>Compra Finalizada com Sucesso!</h1>
-        <p>Seu pedido foi processado e estamos preparando para envio.</p>
+        <p>Seu pedido foi processado.</p>
         
         <div className="OrderDetails">
           <h2>Detalhes do Pedido</h2>

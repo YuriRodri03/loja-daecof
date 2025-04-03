@@ -31,7 +31,7 @@ function OrderConfirmation() {
 
         <button 
           className="BackToProductsButton" 
-          onClick={() => window.location.href = '/products'}
+          onClick={() => navigate('/products')}
         >
           Voltar para Produtos
         </button>

@@ -475,9 +475,14 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
 
     await newOrder.save();
 
-    res.status(201).json({
+    res.status(200).json({
       message: 'Pedido criado com sucesso',
-      orderId: newOrder._id
+      orderData: {
+        items: parsedItems,
+        total: newOrder.total,
+        orderDate: new Date().toLocaleString(),
+        proofName: req.file.originalname
+      }
     });
 
   } catch (error) {

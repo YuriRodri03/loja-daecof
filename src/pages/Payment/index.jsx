@@ -142,19 +142,17 @@ function Payment() {
         }
       );
 
-      if (response.status === 200) {
+      if (response.data && response.data.orderData) {
         localStorage.removeItem('cart');
         navigate('/order-confirmation', {
           state: {
-            orderData: {
-              items: cartItems,
-              total: cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
-              orderDate: new Date().toLocaleString(),
-              proofName: proof.name
-            }
+            orderData: response.data.orderData
           }
         });
+      } else {
+        throw new Error('Resposta inesperada do servidor');
       }
+      
     } catch (error) {
       console.error('Erro ao enviar pedido:', {
         error: error.response?.data || error.message,

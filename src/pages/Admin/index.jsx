@@ -85,37 +85,26 @@ function Admin() {
   };
 
   const updateProduct = async (id, updatedProduct) => {
-    const formData = new FormData();
-    formData.append('name', updatedProduct.name);
-    formData.append('sizes', updatedProduct.sizes);
-    formData.append('gender', updatedProduct.gender);
-    formData.append('price', updatedProduct.price);
-
-    // Se uma nova imagem foi enviada
-    if (updatedProduct.image instanceof File) {
-      formData.append('image', updatedProduct.image);
-    }
-
-    formData.append('isAdmin', true);
-
     try {
-      const response = await api.put(`/products/${id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'is-admin': true,
-        },
+      let base64Image = updatedProduct.image;
+
+      // Se for um File object, converte para Base64
+      if (updatedProduct.image instanceof File) {
+        base64Image = await convertToBase64(updatedProduct.image);
+      }
+
+      const response = await api.put(`/products/${id}`, {
+        ...updatedProduct,
+        image: base64Image,
+        isAdmin: true
       });
 
-      alert('Produto atualizado com sucesso!');
-      fetchProducts();
-
-      // Atualiza o estado local para mostrar a nova imagem
-      setProducts(products.map(product =>
-        product._id === id ? response.data.product : product
+      // Atualiza o estado para mostrar a nova imagem
+      setProducts(products.map(p =>
+        p._id === id ? { ...p, image: base64Image || p.image } : p
       ));
     } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
-      alert('Erro ao atualizar produto. Verifique o console para mais detalhes.');
+      console.error('Update error:', error);
     }
   };
 
@@ -318,7 +307,9 @@ function Admin() {
                 </button>
                 {product.image && (
                   <img
-                    src={product.image}
+                    src={product.image.startsWith('data:image') ?
+                      product.image :
+                      `${import.meta.env.VITE_BACKEND_URL}${product.image}`}
                     alt="Preview"
                     className="product-image-preview"
                   />

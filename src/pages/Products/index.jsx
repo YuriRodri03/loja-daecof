@@ -69,23 +69,25 @@ function Products() {
           <span>Ir para o Carrinho</span>
         </button>
       </div>
-      
+
       <div className='products-grid'>
         {products.length > 0 ? (
           products.map((product) => (
             <div key={product._id} className='product-card'>
               <div className='product-image-container'>
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  className='product-image' 
+                <img
+                  src={product.image.startsWith('data:image') ?
+                    product.image :
+                    `${import.meta.env.VITE_BACKEND_URL}${product.image}`}
+                  alt={product.name}
+                  className='product-image'
                 />
               </div>
-              
+
               <div className='product-info'>
                 <h2 className='product-name'>{product.name}</h2>
                 <p className='product-price'>R$ {product.price.toFixed(2)}</p>
-                
+
                 <div className='product-options'>
                   <div className='option-group'>
                     <label>Tamanho:</label>
@@ -102,7 +104,7 @@ function Products() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className='option-group'>
                     <label>Gênero:</label>
                     <select
@@ -118,7 +120,7 @@ function Products() {
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className='option-group'>
                     <label>Quantidade:</label>
                     <input
@@ -131,8 +133,8 @@ function Products() {
                     />
                   </div>
                 </div>
-                
-                <button 
+
+                <button
                   className='add-to-cart-btn'
                   onClick={() => handleAddToCart(product)}
                 >

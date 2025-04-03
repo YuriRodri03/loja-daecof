@@ -288,10 +288,12 @@ app.get('/products', async (req, res) => {
   }
 });
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Rota para atualizar um produto (apenas para administradores)
-app.put('/products/:id', isAdmin, upload.single('image'), async (req, res) => {
+app.put('/products/:id', isAdmin, async (req, res) => {
   const { id } = req.params;
-  const { name, sizes, gender, price } = req.body;
+  const { name, sizes, gender, price, image } = req.body;
 
   try {
     const updateData = {
@@ -301,18 +303,15 @@ app.put('/products/:id', isAdmin, upload.single('image'), async (req, res) => {
       price,
     };
 
-    // Se uma nova imagem foi enviada
-    if (req.file) {
-      updateData.image = `/uploads/${req.file.filename}`;
+    // Se uma nova imagem foi enviada como Base64
+    if (image && image.startsWith('data:image')) {
+      updateData.image = image;
     }
 
     const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
-    if (!product) {
-      return res.status(404).send({ message: 'Produto não encontrado!' });
-    }
-    res.send({ message: 'Produto atualizado com sucesso!', product });
+    res.send({ product });
   } catch (error) {
-    res.status(500).send({ message: 'Erro ao atualizar produto', error });
+    res.status(500).send({ error: "Update failed" });
   }
 });
 

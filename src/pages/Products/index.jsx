@@ -62,65 +62,87 @@ function Products() {
   };
 
   return (
-    <div className='Container'>
-      <button className='GoToCartButton' onClick={() => navigate('/cart')}>
-        Ir para o Carrinho
-      </button>
-      <h1>Produtos</h1>
-      <div className='Products'>
+    <div className='products-container'>
+      <div className='products-header'>
+        <h1 className='products-title'>Produtos</h1>
+        <button className='cart-btn' onClick={() => navigate('/cart')}>
+          <span>Ir para o Carrinho</span>
+        </button>
+      </div>
+      
+      <div className='products-grid'>
         {products.length > 0 ? (
           products.map((product) => (
-            <div key={product._id} className='Product'>
-              <img src={product.image} alt={product.name} className='ProductImage' />
-              <h2>{product.name}</h2>
-              <p><strong>Preço:</strong> R$ {product.price.toFixed(2)}</p>
-              <div className='ProductOptions'>
-                <div>
-                  <strong>Tamanho:</strong>
-                  <select
-                    value={selectedOptions[product._id]?.size || ''}
-                    onChange={(e) => handleOptionChange(product._id, 'size', e.target.value)}
-                  >
-                    <option value=''>Selecione</option>
-                    {product.sizes.map((size) => (
-                      <option key={size} value={size}>
-                        {size}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <strong>Gênero:</strong>
-                  <select
-                    value={selectedOptions[product._id]?.gender || ''}
-                    onChange={(e) => handleOptionChange(product._id, 'gender', e.target.value)}
-                  >
-                    <option value=''>Selecione</option>
-                    {product.gender.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <strong>Quantidade:</strong>
-                  <input
-                    type='number'
-                    min='1'
-                    placeholder='0'
-                    value={selectedOptions[product._id]?.quantity || ''}
-                    onChange={(e) => handleOptionChange(product._id, 'quantity', e.target.value)}
-                  />
-                </div>
+            <div key={product._id} className='product-card'>
+              <div className='product-image-container'>
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className='product-image' 
+                />
               </div>
-              <button onClick={() => handleAddToCart(product)}>
-                Adicionar ao Carrinho
-              </button>
+              
+              <div className='product-info'>
+                <h2 className='product-name'>{product.name}</h2>
+                <p className='product-price'>R$ {product.price.toFixed(2)}</p>
+                
+                <div className='product-options'>
+                  <div className='option-group'>
+                    <label>Tamanho:</label>
+                    <select
+                      className='option-select'
+                      value={selectedOptions[product._id]?.size || ''}
+                      onChange={(e) => handleOptionChange(product._id, 'size', e.target.value)}
+                    >
+                      <option value=''>Selecione</option>
+                      {product.sizes.map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className='option-group'>
+                    <label>Gênero:</label>
+                    <select
+                      className='option-select'
+                      value={selectedOptions[product._id]?.gender || ''}
+                      onChange={(e) => handleOptionChange(product._id, 'gender', e.target.value)}
+                    >
+                      <option value=''>Selecione</option>
+                      {product.gender.map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className='option-group'>
+                    <label>Quantidade:</label>
+                    <input
+                      className='option-input'
+                      type='number'
+                      min='1'
+                      placeholder='0'
+                      value={selectedOptions[product._id]?.quantity || ''}
+                      onChange={(e) => handleOptionChange(product._id, 'quantity', e.target.value)}
+                    />
+                  </div>
+                </div>
+                
+                <button 
+                  className='add-to-cart-btn'
+                  onClick={() => handleAddToCart(product)}
+                >
+                  Adicionar ao Carrinho
+                </button>
+              </div>
             </div>
           ))
         ) : (
-          <p>Carregando produtos...</p>
+          <p className='loading-message'>Carregando produtos...</p>
         )}
       </div>
     </div>

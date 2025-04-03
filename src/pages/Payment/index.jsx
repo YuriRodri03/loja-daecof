@@ -189,108 +189,129 @@ function Payment() {
   }
 
   return (
-    <div className="Container">
-      <h1>Pagamento</h1>
-      
-      <div className="PaymentOptions">
-        <div className="PixPayment">
-          <h2>Pagamento via PIX</h2>
-          <p>Chave PIX: <strong>{paymentInfo.pixKey || 'Não disponível'}</strong></p>
-          <p>Nome: <strong>{paymentInfo.name || 'Não disponível'}</strong></p>
-          <p>Banco: <strong>{paymentInfo.institution || 'Não disponível'}</strong></p>
-          {paymentInfo.qrCode && (
-            <div className="QRCodeContainer">
-              <img src={paymentInfo.qrCode} alt="QR Code para pagamento" className="QRCode" />
-              <p className="QRCodeHint">Escaneie o QR Code com seu app de pagamentos</p>
-            </div>
-          )}
+    <div className="payment-container">
+      {isLoading ? (
+        <div className="loading-spinner">
+          <div className="spinner"></div>
+          <p className="loading-text">Carregando informações de pagamento...</p>
         </div>
-        
-        <div className="CardPayment">
-          <h2>Pagamento com Cartão</h2>
-          {paymentInfo.links && paymentInfo.links.length > 0 ? (
-            <>
-              <p className="PaymentInstructions">Selecione a quantidade de itens que deseja comprar:</p>
-              {paymentInfo.links.map((link, index) => (
-                <div key={index} className="PaymentLink">
-                  <a 
-                    href={link} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="PaymentLinkButton"
-                  >
-                    Pagamento para {index + 1} unidade{index > 0 ? 's' : ''}
-                  </a>
+      ) : (
+        <>
+          <h1 className="payment-title">Pagamento</h1>
+          
+          <div className="payment-options">
+            <div className="payment-method">
+              <h2>Pagamento via PIX</h2>
+              <p className="payment-detail">Chave PIX: <strong>{paymentInfo.pixKey || 'Não disponível'}</strong></p>
+              <p className="payment-detail">Nome: <strong>{paymentInfo.name || 'Não disponível'}</strong></p>
+              <p className="payment-detail">Banco: <strong>{paymentInfo.institution || 'Não disponível'}</strong></p>
+              
+              {paymentInfo.qrCode && (
+                <div className="qr-code-container">
+                  <img src={paymentInfo.qrCode} alt="QR Code para pagamento" className="qr-code" />
+                  <p className="qr-code-hint">Escaneie o QR Code com seu app de pagamentos</p>
                 </div>
-              ))}
-            </>
-          ) : (
-            <p className="NoPaymentLinks">Nenhum link de pagamento disponível no momento.</p>
-          )}
-        </div>
-      </div>
-      
-      <div className="ProofUpload">
-        <h2>Anexar Comprovante</h2>
-        <div className="FileUploadContainer">
-          <label htmlFor="proofUpload" className="FileUploadLabel">
-            {proof ? proof.name : 'Selecione o comprovante'}
-          </label>
-          <input
-            id="proofUpload"
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={handleFileChange}
-            required
-            className="FileUploadInput"
-          />
-          <p className="FileUploadHint">
-            Formatos aceitos: JPG, PNG, PDF (tamanho máximo: 10MB)
-          </p>
-        </div>
-      </div>
-      
-      <div className="OrderSummary">
-        <h3>Resumo do Pedido</h3>
-        {cartItems.length > 0 ? (
-          <>
-            <ul className="OrderItems">
-              {cartItems.map((item, index) => (
-                <li key={index} className="OrderItem">
-                  <span className="ItemName">{item.name}</span>
-                  <span className="ItemDetails">
-                    {item.quantity}x R$ {item.price.toFixed(2)}
-                  </span>
-                  {item.size && <span className="ItemSize">Tamanho: {item.size}</span>}
-                </li>
-              ))}
-            </ul>
-            <div className="OrderTotal">
-              <span>Total:</span>
-              <span className="TotalAmount">
-                R$ {cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
-              </span>
+              )}
             </div>
-          </>
-        ) : (
-          <p className="EmptyCartMessage">Nenhum item no carrinho</p>
-        )}
-      </div>
-      
-      <button 
-        className={`PaymentButton ${isSubmitting ? 'Submitting' : ''}`}
-        onClick={handlePayment}
-        disabled={!proof || cartItems.length === 0 || isSubmitting}
-      >
-        {isSubmitting ? (
-          <>
-            <span className="Spinner"></span>
-            Processando...
-          </>
-        ) : (
-          'Finalizar Compra'
-        )}
-      </button>
+            
+            <div className="payment-method">
+              <h2>Pagamento com Cartão</h2>
+              {paymentInfo.links && paymentInfo.links.length > 0 ? (
+                <>
+                  <p className="payment-instructions">
+                    Selecione a quantidade de itens que deseja comprar:
+                  </p>
+                  <div className="payment-links">
+                    {paymentInfo.links.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="payment-link"
+                      >
+                        Pagamento para {index + 1} unidade{index > 0 ? 's' : ''}
+                      </a>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="no-payment-links">Nenhum link de pagamento disponível no momento.</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="proof-upload">
+            <h2>Anexar Comprovante</h2>
+            <div className="file-upload-container">
+              <label 
+                htmlFor="proofUpload" 
+                className={`file-upload-label ${proof ? 'has-file' : ''}`}
+              >
+                <div className="file-upload-icon">
+                  {proof ? '✓' : '↑'}
+                </div>
+                <div className="file-upload-text">
+                  {proof ? proof.name : 'Clique para selecionar ou arraste o comprovante'}
+                </div>
+              </label>
+              <input
+                id="proofUpload"
+                type="file"
+                accept="image/*,application/pdf"
+                onChange={handleFileChange}
+                required
+                className="file-upload-input"
+              />
+              <p className="file-upload-hint">
+                Formatos aceitos: JPG, PNG, PDF (tamanho máximo: 10MB)
+              </p>
+            </div>
+          </div>
+          
+          <div className="order-summary">
+            <h3>Resumo do Pedido</h3>
+            {cartItems.length > 0 ? (
+              <>
+                <ul className="order-items">
+                  {cartItems.map((item, index) => (
+                    <li key={index} className="order-item">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-details">
+                        {item.quantity}x R$ {item.price.toFixed(2)}
+                      </span>
+                      {item.size && <span className="item-size">Tamanho: {item.size}</span>}
+                    </li>
+                  ))}
+                </ul>
+                <div className="order-total">
+                  <span>Total:</span>
+                  <span className="total-amount">
+                    R$ {cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <p className="empty-cart-message">Nenhum item no carrinho</p>
+            )}
+          </div>
+          
+          <button 
+            className="payment-button"
+            onClick={handlePayment}
+            disabled={!proof || cartItems.length === 0 || isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner"></span>
+                Processando...
+              </>
+            ) : (
+              'Finalizar Compra'
+            )}
+          </button>
+        </>
+      )}
     </div>
   );
 }

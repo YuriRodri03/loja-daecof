@@ -27,40 +27,58 @@ function Cart() {
   }, [cart]);
 
   return (
-    <div className='Container'>
-      <h1>Carrinho</h1>
+    <div className='cart-container'>
+      <h1 className='cart-title'>Carrinho</h1>
       {cart.length === 0 ? (
-        <div className='EmptyCart'>
+        <div className='empty-cart'>
           <p>Seu carrinho está vazio. Adicione produtos na aba de produtos!</p>
           <button onClick={() => navigate('/products')}>Voltar para Produtos</button>
         </div>
       ) : (
         <>
-          <div className='CartItems'>
+          <div className='cart-items'>
             {cart.map((item, index) => (
-              <div key={index} className='CartItem'>
-                <img src={item.image} alt={item.name} className='CartItemImage' />
-                <div className='CartItemDetails'>
-                  <h2>{item.name}</h2>
-                  <p><strong>Tamanho:</strong> {item.size}</p>
-                  <p><strong>Gênero:</strong> {item.gender}</p>
-                  <p><strong>Quantidade:</strong> {item.quantity}</p>
-                  <p><strong>Preço:</strong> R$ {item.price.toFixed(2)}</p>
+              <div key={index} className='cart-item'>
+                <div className='cart-item-image-container'>
+                  <img src={item.image} alt={item.name} className='cart-item-image' />
                 </div>
-                <button className='RemoveButton' onClick={() => handleRemoveItem(index)}>
-                  Remover
+                <div className='cart-item-details'>
+                  <h2 className='cart-item-name'>{item.name}</h2>
+                  <div className='cart-item-info'>
+                    <p><strong>Tamanho:</strong> {item.size}</p>
+                    <p><strong>Gênero:</strong> {item.gender}</p>
+                    <p><strong>Quantidade:</strong> {item.quantity}</p>
+                  </div>
+                  <p className='cart-item-price'>R$ {item.price.toFixed(2)}</p>
+                </div>
+                <button 
+                  className='remove-item-btn'
+                  onClick={() => handleRemoveItem(index)}
+                  aria-label="Remover item"
+                >
+                  ×
                 </button>
               </div>
             ))}
           </div>
-          <div className='CartSummary'>
-            <h2>Total: R$ {total.toFixed(2)}</h2>
+          
+          <div className='cart-summary'>
+            <h2 className='cart-total'>
+              Total: <span className='cart-total-amount'>R$ {total.toFixed(2)}</span>
+            </h2>
           </div>
-          <div className='CartActions'>
-            <button className='AddMoreButton' onClick={() => navigate('/products')}>
+          
+          <div className='cart-actions'>
+            <button 
+              className='cart-action-btn continue-shopping-btn'
+              onClick={() => navigate('/products')}
+            >
               Adicionar Mais Itens
             </button>
-            <button className='CheckoutButton' onClick={() => navigate('/payment')}>
+            <button 
+              className='cart-action-btn checkout-btn'
+              onClick={() => navigate('/payment')}
+            >
               Ir para o Pagamento
             </button>
           </div>

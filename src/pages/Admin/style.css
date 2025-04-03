@@ -1,248 +1,250 @@
-/* Container principal */
-.Container {
-  padding: 20px;
-  text-align: center;
-  justify-content: center;
-  font-family: 'Roboto', sans-serif;
+/* style.css - Página Admin */
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
   min-height: 100vh;
 }
 
-/* Título principal */
-h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  font-weight: bold;
+.admin-title {
+  font-size: 2rem;
+  color: var(--dark-color);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.5rem;
 }
 
-/* Seção de adicionar produto */
-.AddProduct {
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #ffffff;
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+.admin-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 3px;
+  background-color: var(--primary-color);
 }
 
-.AddProduct input {
-  width: calc(100% - 20px);
-  margin: 10px 0;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.admin-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--light-color);
+}
+
+/* Formulários */
+.admin-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .admin-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
+  transition: var(--transition);
 }
 
-.AddProduct input:focus {
-  border-color: #3498db; /* Destaque ao focar */
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.2);
   outline: none;
 }
 
-.AddProduct button {
-  margin-top: 10px;
-  padding: 12px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
+.form-file-input {
+  display: none;
+}
+
+.form-file-label {
+  display: block;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
 }
 
-.AddProduct button:hover {
-  background-color: #45a049;
+.form-file-label:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(17, 153, 142, 0.05);
 }
 
-/* Seção de edição de produtos */
-.ProductEdit {
-  display: flex;
-  justify-content: space-between;
+/* Botões */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
   align-items: center;
-  margin: 10px auto;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.ProductEdit input {
-  width: 50%;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.ProductEdit input:focus {
-  border-color: #3498db; /* Destaque ao focar */
-  outline: none;
-}
-
-.ProductEdit button {
-  padding: 12px 20px;
-  background-color: #e74c3c;
+.btn-primary {
+  background-color: var(--primary-color);
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
 }
 
-.ProductEdit button:hover {
-  background-color: #2980b9;
+.btn-primary:hover {
+  background-color: var(--dark-color);
+  transform: translateY(-2px);
 }
 
-/* Botão de remover produto */
-.RemoveButton {
-  padding: 12px 20px;
-  background-color: #e74c3c;
+.btn-danger {
+  background-color: var(--accent-color);
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
 }
 
-.RemoveButton:hover {
-  background-color: #c0392b;
+.btn-danger:hover {
+  background-color: #ff5252;
+  transform: translateY(-2px);
 }
 
-/* Mensagem de carregamento */
-.LoadingMessage {
-  font-size: 1.2rem;
-  color: #7f8c8d;
-  margin-top: 20px;
+.btn-secondary {
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
 }
 
-/* Botão de deletar produto */
-.DeleteButton {
-  margin-top: 10px;
-  padding: 12px 20px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
+.btn-secondary:hover {
+  background-color: var(--light-color);
+  transform: translateY(-2px);
 }
 
-.DeleteButton:hover {
-  background-color: #c0392b;
+/* Lista de produtos */
+.products-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
-/* Seção de edição de informações de pagamento */
-.EditPaymentInfo {
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #ffffff;
-  max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
+.product-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: white;
 }
 
-.EditPaymentInfo input {
-  width: calc(100% - 20px);
-  margin: 10px 0;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+@media (max-width: 768px) {
+  .product-item {
+    grid-template-columns: 1fr;
+  }
 }
 
-.EditPaymentInfo input:focus {
-  border-color: #3498db; /* Destaque ao focar */
-  outline: none;
-}
-
-.EditPaymentInfo button {
-  margin-top: 10px;
-  padding: 12px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-.EditPaymentInfo button:hover {
-  background-color: #45a049;
+.product-image-preview {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 /* Links de pagamento */
-.EditPaymentInfo ul {
+.payment-links-list {
   list-style: none;
   padding: 0;
+  margin-bottom: 1rem;
 }
 
-.EditPaymentInfo li {
-  margin: 5px 0;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.payment-link-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
 }
 
-.EditPaymentInfo li button {
-  padding: 5px 10px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
+.payment-link-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1rem;
 }
 
-.EditPaymentInfo li button:hover {
-  background-color: #c0392b;
+/* Exportar pedidos */
+.export-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 1rem;
+  align-items: end;
 }
 
-.ExportOrders {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+@media (max-width: 768px) {
+  .export-form {
+    grid-template-columns: 1fr;
+  }
 }
 
-.ExportOrders label {
-  display: flex;
-  flex-direction: column;
-  font-size: 16px;
-  color: #333;
+/* Mensagens */
+.empty-message {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem 0;
 }
 
-.ExportOrders input {
-  padding: 5px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.ExportOrders button {
-  padding: 10px 15px;
-  font-size: 16px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.ExportOrders button:hover {
-  background-color: #45a049;
+/* Responsividade */
+@media (max-width: 480px) {
+  .admin-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .admin-title {
+    font-size: 1.75rem;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+  }
+  
+  .btn {
+    width: 100%;
+  }
 }

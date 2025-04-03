@@ -397,7 +397,7 @@ app.get('/orders/export', authenticate, async (req, res) => {
 
     worksheet.columns = [
       { header: 'Data', key: 'date', width: 20 },
-      { header: 'Cliente', key: 'userName', width: 25, style: { font: { bold: true }}},
+      { header: 'Cliente', key: 'userName', width: 25 },
       { header: 'Email', key: 'userEmail', width: 30 },
       { header: 'Telefone', key: 'userPhone', width: 20 },
       { header: 'Curso', key: 'userCourse', width: 20 },

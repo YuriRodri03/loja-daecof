@@ -8,6 +8,12 @@ function Cart() {
     JSON.parse(localStorage.getItem('cart')) || [] // Carrega o carrinho do localStorage
   );
 
+  // Carrega o carrinho do localStorage quando o componente monta
+  useEffect(() => {
+    const savedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCart(savedCart);
+  }, []);
+
   // Função para remover item do carrinho
   const handleRemoveItem = (index) => {
     const updatedCart = cart.filter((_, i) => i !== index); // Remove o item pelo índice

@@ -7,6 +7,7 @@ import Products from './pages/Products';
 import Cart from './pages/Cart';
 import Payment from './pages/Payment';
 import Admin from './pages/Admin';
+import OrderConfirmation from './pages/order-confirmation';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(

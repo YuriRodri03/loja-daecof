@@ -11,23 +11,29 @@ function OrderConfirmation() {
   return (
     <div className="order-confirmation-container">
       <div className="confirmation-card">
-        <h1 className="confirmation-title">Compra Finalizada com Sucesso!</h1>
+        <div className="confirmation-header">
+          <h1 className="confirmation-title">Compra Finalizada com Sucesso!</h1>
+          <div className="confirmation-icon">✓</div>
+        </div>
+        
         <p className="confirmation-message">Seu pedido foi processado e está sendo preparado.</p>
         
         <div className="order-details">
-          <h2 className="order-details-title">Detalhes do Pedido</h2>
+          <h2 className="order-details-title">
+            <span className="order-icon">📋</span> Detalhes do Pedido
+          </h2>
           
           <div className="detail-row">
             <span className="detail-label">Data:</span>
             <span className="detail-value">
-              {orderData.orderDate || new Date().toLocaleString('pt-BR')}
+              {formatDate(orderData.orderDate)}
             </span>
           </div>
           
           <div className="detail-row">
             <span className="detail-label">Total:</span>
             <span className="detail-value">
-              R$ {orderData.total?.toFixed(2) || '0.00'}
+              R$ {orderData.total?.toFixed(2).replace('.', ',') || '0,00'}
             </span>
           </div>
           
@@ -38,26 +44,32 @@ function OrderConfirmation() {
             </span>
           </div>
           
-          <h3 className="order-items-title">Itens do Pedido</h3>
-          <ul className="order-items-list">
+          <h3 className="order-items-title">
+            <span className="order-icon">🛍️</span> Itens do Pedido
+          </h3>
+          
+          <div className="order-items-container">
             {orderData.items?.map((item, index) => (
-              <li key={index} className="order-item">
-                <span className="item-name">
-                  {item.name}
+              <div key={index} className="order-item">
+                <div className="item-info">
+                  <span className="item-name">{item.name}</span>
                   {item.size && <span className="item-size">Tamanho: {item.size}</span>}
-                </span>
-                <span className="item-quantity">{item.quantity}x</span>
-                <span className="item-price">R$ {item.price.toFixed(2)}</span>
-              </li>
+                </div>
+                <div className="item-values">
+                  <span className="item-quantity">{item.quantity}x</span>
+                  <span className="item-price">R$ {item.price.toFixed(2).replace('.', ',')}</span>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
-  
+
         <button 
           className="continue-shopping-btn" 
           onClick={() => navigate('/products')}
         >
-          Continuar Comprando
+          <span>Continuar Comprando</span>
+          <span className="btn-arrow">→</span>
         </button>
       </div>
     </div>

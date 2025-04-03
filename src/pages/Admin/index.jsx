@@ -87,24 +87,31 @@ function Admin() {
   const updateProduct = async (id, updatedProduct) => {
     try {
       let base64Image = updatedProduct.image;
-
+      
       // Se for um File object, converte para Base64
       if (updatedProduct.image instanceof File) {
         base64Image = await convertToBase64(updatedProduct.image);
       }
-
+  
       const response = await api.put(`/products/${id}`, {
         ...updatedProduct,
         image: base64Image,
         isAdmin: true
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'is-admin': true
+        }
       });
-
+  
       // Atualiza o estado para mostrar a nova imagem
-      setProducts(products.map(p =>
-        p._id === id ? { ...p, image: base64Image || p.image } : p
+      setProducts(products.map(p => 
+        p._id === id ? { ...p, ...response.data.product, image: base64Image || p.image } : p
       ));
+      alert('Produto atualizado com sucesso!');
     } catch (error) {
-      console.error('Update error:', error);
+      console.error('Erro detalhado:', error.response?.data || error.message);
+      alert(`Erro ao atualizar produto: ${error.response?.data?.message || error.message}`);
     }
   };
 

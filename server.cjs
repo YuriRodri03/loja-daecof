@@ -296,22 +296,42 @@ app.put('/products/:id', isAdmin, async (req, res) => {
   const { name, sizes, gender, price, image } = req.body;
 
   try {
+    // Validação do ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).send({ message: 'ID do produto inválido' });
+    }
+
     const updateData = {
       name,
-      sizes: sizes.split(','),
-      gender: gender.split(','),
+      sizes: typeof sizes === 'string' ? sizes.split(',') : sizes,
+      gender: typeof gender === 'string' ? gender.split(',') : gender,
       price,
     };
 
-    // Se uma nova imagem foi enviada como Base64
-    if (image && image.startsWith('data:image')) {
+    if (image && (image.startsWith('data:image') || image.startsWith('http'))) {
       updateData.image = image;
     }
 
-    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
-    res.send({ product });
+    const product = await Product.findByIdAndUpdate(
+      id, 
+      updateData, 
+      { new: true }
+    );
+
+    if (!product) {
+      return res.status(404).send({ message: 'Produto não encontrado' });
+    }
+
+    res.send({ 
+      message: 'Produto atualizado com sucesso',
+      product 
+    });
   } catch (error) {
-    res.status(500).send({ error: "Update failed" });
+    console.error('Erro no servidor:', error);
+    res.status(500).send({ 
+      message: 'Erro ao atualizar produto',
+      error: error.message 
+    });
   }
 });
 

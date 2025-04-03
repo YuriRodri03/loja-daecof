@@ -37,35 +37,49 @@ function Login() {
   };
 
   return (
-    <div className='Container'>
-      <form>
+    <div className='login-container'>
+      <div className='login-card'>
         <img src={Logo} alt="Logo" className="logo" />
         <h1>Login</h1>
-        <input
-          placeholder='Email'
-          type='email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <div className="password-container">
+        
+        <div className="form-group">
           <input
-            placeholder='Senha'
-            type={showPassword ? 'text' : 'password'} // Alterna entre texto e senha
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            className="form-input"
+            placeholder='Email'
+            type='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <button
-            type="button"
-            className="toggle-password"
-            onClick={() => setShowPassword(!showPassword)} // Alterna o estado
-          >
-            {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Ícone de olho */}
-          </button>
+          
+          <div className="password-container">
+            <input
+              className="form-input"
+              placeholder='Senha'
+              type={showPassword ? 'text' : 'password'}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          
+          <div className="forgot-password">
+            <a href="#" onClick={(e) => { e.preventDefault(); /* Adicionar lógica de recuperação */ }}>
+              Esqueci minha senha
+            </a>
+          </div>
         </div>
-        <button type='button' onClick={handleLogin}>
+        
+        <button className='btn btn-primary' type='button' onClick={handleLogin}>
           Entrar
         </button>
-      </form>
+      </div>
     </div>
   );
 }

@@ -137,8 +137,6 @@ function Home() {
             <option value="">Selecione seu curso</option>
             <option value="Economia">Economia</option>
             <option value="Finanças">Finanças</option>
-            <option value="Administração">Administração</option>
-            <option value="Contabilidade">Contabilidade</option>
           </select>
           {validationErrors.curso && <span className="error-hint">Selecione um curso</span>}
           

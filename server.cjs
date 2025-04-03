@@ -291,43 +291,28 @@ app.get('/products', async (req, res) => {
 // Rota para atualizar um produto (apenas para administradores)
 app.put('/products/:id', isAdmin, upload.single('image'), async (req, res) => {
   const { id } = req.params;
-  const { name, sizes, gender, price, image } = req.body;
+  const { name, sizes, gender, price } = req.body;
 
   try {
-    const updatedProduct = {
+    const updateData = {
       name,
       sizes: sizes.split(','),
       gender: gender.split(','),
       price,
     };
 
-    if (image) {
-      updatedProduct.image = image; // Atualiza a imagem apenas se uma nova for enviada
+    // Se uma nova imagem foi enviada
+    if (req.file) {
+      updateData.image = `/uploads/${req.file.filename}`;
     }
 
-    const product = await Product.findByIdAndUpdate(id, updatedProduct, { new: true });
+    const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
     if (!product) {
       return res.status(404).send({ message: 'Produto não encontrado!' });
     }
     res.send({ message: 'Produto atualizado com sucesso!', product });
   } catch (error) {
     res.status(500).send({ message: 'Erro ao atualizar produto', error });
-  }
-});
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-app.delete('/products/:id', isAdmin, async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const product = await Product.findByIdAndDelete(id);
-    if (!product) {
-      return res.status(404).send({ message: 'Produto não encontrado!' });
-    }
-    res.send({ message: 'Produto deletado com sucesso!' });
-  } catch (error) {
-    res.status(500).send({ message: 'Erro ao deletar produto', error });
   }
 });
 

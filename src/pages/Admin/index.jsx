@@ -87,25 +87,35 @@ function Admin() {
   const updateProduct = async (id, updatedProduct) => {
     const formData = new FormData();
     formData.append('name', updatedProduct.name);
-    formData.append('sizes', updatedProduct.sizes.join(','));
-    formData.append('gender', updatedProduct.gender.join(','));
+    formData.append('sizes', updatedProduct.sizes);
+    formData.append('gender', updatedProduct.gender);
     formData.append('price', updatedProduct.price);
-    if (updatedProduct.image) {
-      formData.append('image', updatedProduct.image); // Adiciona o arquivo de imagem, se enviado
+
+    // Se uma nova imagem foi enviada
+    if (updatedProduct.image instanceof File) {
+      formData.append('image', updatedProduct.image);
     }
+
     formData.append('isAdmin', true);
 
     try {
-      await api.put(`/products/${id}`, formData, {
+      const response = await api.put(`/products/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'is-admin': true, // Adiciona a flag de administrador nos cabeçalhos
+          'is-admin': true,
         },
       });
+
       alert('Produto atualizado com sucesso!');
-      fetchProducts(); // Atualiza a lista de produtos após a edição
+      fetchProducts();
+
+      // Atualiza o estado local para mostrar a nova imagem
+      setProducts(products.map(product =>
+        product._id === id ? response.data.product : product
+      ));
     } catch (error) {
       console.error('Erro ao atualizar produto:', error);
+      alert('Erro ao atualizar produto. Verifique o console para mais detalhes.');
     }
   };
 
@@ -200,7 +210,7 @@ function Admin() {
   return (
     <div className="admin-container">
       <h1 className="admin-title">Administração</h1>
-  
+
       {/* Seção para adicionar produtos */}
       <section className="admin-section">
         <h2 className="section-title">Adicionar Produto</h2>
@@ -214,7 +224,7 @@ function Admin() {
               onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group">
             <label className="form-label">Tamanhos (separados por vírgula)</label>
             <input
@@ -224,7 +234,7 @@ function Admin() {
               onChange={(e) => setNewProduct({ ...newProduct, sizes: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group">
             <label className="form-label">Gêneros (separados por vírgula)</label>
             <input
@@ -234,7 +244,7 @@ function Admin() {
               onChange={(e) => setNewProduct({ ...newProduct, gender: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group">
             <label className="form-label">Preço</label>
             <input
@@ -244,7 +254,7 @@ function Admin() {
               onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group full-width">
             <label className="form-label">Imagem do Produto</label>
             <label htmlFor="productImage" className="form-file-label">
@@ -257,9 +267,9 @@ function Admin() {
               onChange={(e) => setNewProduct({ ...newProduct, image: e.target.files[0] })}
             />
           </div>
-  
-          <button 
-            type="button" 
+
+          <button
+            type="button"
             className="btn btn-primary"
             onClick={addProduct}
           >
@@ -267,7 +277,7 @@ function Admin() {
           </button>
         </form>
       </section>
-  
+
       {/* Seção para editar produtos */}
       <section className="admin-section">
         <h2 className="section-title">Editar Produtos</h2>
@@ -291,21 +301,25 @@ function Admin() {
                   type="file"
                   id={`image-${product._id}`}
                   className="form-file-input"
-                  onChange={(e) => updateProduct(product._id, { ...product, image: e.target.files[0] })}
+                  onChange={(e) => {
+                    if (e.target.files[0]) {
+                      updateProduct(product._id, { ...product, image: e.target.files[0] });
+                    }
+                  }}
                 />
                 <label htmlFor={`image-${product._id}`} className="btn btn-secondary">
                   Alterar Imagem
                 </label>
-                <button 
-                  onClick={() => deleteProduct(product._id)} 
+                <button
+                  onClick={() => deleteProduct(product._id)}
                   className="btn btn-danger"
                 >
                   Deletar
                 </button>
                 {product.image && (
-                  <img 
-                    src={product.image} 
-                    alt="Preview" 
+                  <img
+                    src={product.image}
+                    alt="Preview"
                     className="product-image-preview"
                   />
                 )}
@@ -316,7 +330,7 @@ function Admin() {
           <p className="empty-message">Nenhum produto encontrado.</p>
         )}
       </section>
-  
+
       {/* Seção para editar informações de pagamento */}
       <section className="admin-section">
         <h2 className="section-title">Informações de Pagamento</h2>
@@ -330,7 +344,7 @@ function Admin() {
               onChange={(e) => setPaymentInfo({ ...paymentInfo, pixKey: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group">
             <label className="form-label">Nome do Recebedor</label>
             <input
@@ -340,7 +354,7 @@ function Admin() {
               onChange={(e) => setPaymentInfo({ ...paymentInfo, name: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group">
             <label className="form-label">Instituição</label>
             <input
@@ -350,7 +364,7 @@ function Admin() {
               onChange={(e) => setPaymentInfo({ ...paymentInfo, institution: e.target.value })}
             />
           </div>
-  
+
           <div className="form-group full-width">
             <label className="form-label">QR Code PIX</label>
             <label htmlFor="qrCode" className="form-file-label">
@@ -369,15 +383,15 @@ function Admin() {
               }}
             />
           </div>
-  
+
           <div className="form-group full-width">
             <h3 className="section-title" style={{ fontSize: '1.2rem' }}>Links de Pagamento</h3>
             <ul className="payment-links-list">
               {paymentInfo.links?.map((link, index) => (
                 <li key={index} className="payment-link-item">
                   <span className="payment-link-text">{link}</span>
-                  <button 
-                    onClick={() => handleRemoveLink(index)} 
+                  <button
+                    onClick={() => handleRemoveLink(index)}
                     className="btn btn-danger"
                     style={{ padding: '0.25rem 0.5rem' }}
                   >
@@ -394,8 +408,8 @@ function Admin() {
                 value={newLink}
                 onChange={(e) => setNewLink(e.target.value)}
               />
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn btn-secondary"
                 onClick={handleAddLink}
               >
@@ -403,9 +417,9 @@ function Admin() {
               </button>
             </div>
           </div>
-  
-          <button 
-            type="button" 
+
+          <button
+            type="button"
             className="btn btn-primary full-width"
             onClick={updatePaymentInfo}
           >
@@ -413,7 +427,7 @@ function Admin() {
           </button>
         </form>
       </section>
-  
+
       {/* Seção para exportar pedidos */}
       <section className="admin-section">
         <h2 className="section-title">Exportar Pedidos</h2>
@@ -436,8 +450,8 @@ function Admin() {
               onChange={(e) => setEndDate(e.target.value)}
             />
           </div>
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn btn-primary"
             onClick={exportOrders}
           >

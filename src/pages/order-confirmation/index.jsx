@@ -1,12 +1,30 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import './style.css';
 
 function OrderConfirmation() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const orderData = state?.orderData || {};
+
+  // Função para formatar a data no padrão brasileiro
+  const formatDate = (dateString) => {
+    if (!dateString) return new Date().toLocaleString('pt-BR');
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      console.error('Erro ao formatar data:', error);
+      return new Date().toLocaleString('pt-BR');
+    }
+  };
 
   return (
     <div className="order-confirmation-container">

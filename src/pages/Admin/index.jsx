@@ -8,6 +8,7 @@ function Admin() {
     name: '',
     sizes: '',
     gender: '',
+    colors: '',
     image: '',
     price: '',
   });
@@ -58,8 +59,9 @@ function Admin() {
 
       const productData = {
         name: newProduct.name,
-        sizes: newProduct.sizes,
-        gender: newProduct.gender,
+        sizes: newProduct.sizes.split(',').map(s => s.trim()),
+        gender: newProduct.gender.split(',').map(g => g.trim()),
+        colors: newProduct.colors.split(',').map(c => c.trim()),
         price: newProduct.price,
         image: base64Image, // Envia a imagem como Base64
         isAdmin: true,
@@ -87,25 +89,39 @@ function Admin() {
   const updateProduct = async (id, updatedProduct) => {
     try {
       let base64Image = updatedProduct.image;
-      
+
       // Se for um File object, converte para Base64
       if (updatedProduct.image instanceof File) {
         base64Image = await convertToBase64(updatedProduct.image);
       }
-  
-      const response = await api.put(`/products/${id}`, {
+
+      // Converte strings para arrays se necessário
+      const updateData = {
         ...updatedProduct,
-        image: base64Image,
+        sizes: typeof updatedProduct.sizes === 'string' ?
+          updatedProduct.sizes.split(',').map(s => s.trim()) :
+          updatedProduct.sizes,
+        gender: typeof updatedProduct.gender === 'string' ?
+          updatedProduct.gender.split(',').map(g => g.trim()) :
+          updatedProduct.gender,
+        colors: typeof updatedProduct.colors === 'string' ?
+          updatedProduct.colors.split(',').map(c => c.trim()) :
+          updatedProduct.colors,
+        image: base64Image || updatedProduct.image,
         isAdmin: true
+      };
+
+      const response = await api.put(`/products/${id}`, {
+        ...updatedProduct, updateData
       }, {
         headers: {
           'Content-Type': 'application/json',
           'is-admin': true
         }
       });
-  
+
       // Atualiza o estado para mostrar a nova imagem
-      setProducts(products.map(p => 
+      setProducts(products.map(p =>
         p._id === id ? { ...p, ...response.data.product, image: base64Image || p.image } : p
       ));
       alert('Produto atualizado com sucesso!');
@@ -242,6 +258,16 @@ function Admin() {
           </div>
 
           <div className="form-group">
+            <label className="form-label">Cores (separadas por vírgula)</label>
+            <input
+              type="text"
+              className="form-input"
+              value={newProduct.colors}
+              onChange={(e) => setNewProduct({ ...newProduct, colors: e.target.value })}
+            />
+          </div>
+
+          <div className="form-group">
             <label className="form-label">Preço</label>
             <input
               type="number"
@@ -292,6 +318,27 @@ function Admin() {
                   className="form-input"
                   defaultValue={product.price}
                   onBlur={(e) => updateProduct(product._id, { ...product, price: parseFloat(e.target.value) })}
+                />
+                <input
+                  type="text"
+                  className="form-input"
+                  defaultValue={product.sizes.join(', ')}
+                  onBlur={(e) => updateProduct(product._id, { ...product, sizes: e.target.value })}
+                  placeholder="Tamanhos (separados por vírgula)"
+                />
+                <input
+                  type="text"
+                  className="form-input"
+                  defaultValue={product.gender.join(', ')}
+                  onBlur={(e) => updateProduct(product._id, { ...product, gender: e.target.value })}
+                  placeholder="Gêneros (separados por vírgula)"
+                />
+                <input
+                  type="text"
+                  className="form-input"
+                  defaultValue={product.colors?.join(', ') || ''}
+                  onBlur={(e) => updateProduct(product._id, { ...product, colors: e.target.value })}
+                  placeholder="Cores (separadas por vírgula)"
                 />
                 <input
                   type="file"

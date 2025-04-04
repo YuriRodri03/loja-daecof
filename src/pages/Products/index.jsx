@@ -36,10 +36,10 @@ function Products() {
 
   const handleAddToCart = (product) => {
     const options = selectedOptions[product._id] || {};
-    const { size, gender, quantity } = options;
+    const { size, gender, color, quantity } = options;
 
-    if (!size || !gender || !quantity) {
-      alert('Por favor, selecione o tamanho, gênero e quantidade.');
+    if (!size || !gender || !color || !quantity) {
+      alert('Por favor, selecione o tamanho, gênero, cor e quantidade.');
       return;
     }
 
@@ -48,6 +48,7 @@ function Products() {
       name: product.name,
       size,
       gender,
+      color,
       quantity: parseInt(quantity, 10),
       price: product.price,
       image: product.image,
@@ -116,6 +117,22 @@ function Products() {
                       {product.gender.map((g) => (
                         <option key={g} value={g}>
                           {g}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className='option-group'>
+                    <label>Cor:</label>
+                    <select
+                      className='option-select'
+                      value={selectedOptions[product._id]?.color || ''}
+                      onChange={(e) => handleOptionChange(product._id, 'color', e.target.value)}
+                    >
+                      <option value=''>Selecione</option>
+                      {product.colors?.map((color) => (
+                        <option key={color} value={color}>
+                          {color}
                         </option>
                       ))}
                     </select>

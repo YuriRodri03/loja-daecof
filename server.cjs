@@ -66,6 +66,7 @@ const OrderSchema = new mongoose.Schema({
       name: { type: String, required: true },
       size: String,
       gender: String,
+      color: String,
       quantity: { type: Number, required: true, min: 1 },
       price: { type: Number, required: true, min: 0 }
     }],
@@ -88,6 +89,7 @@ const ProductSchema = new mongoose.Schema({
   name: String,
   sizes: [String],
   gender: [String],
+  colors: [String],
   image: String,
   price: Number,
 });
@@ -262,8 +264,9 @@ app.post('/products', isAdmin, async (req, res) => {
   try {
     const newProduct = new Product({
       name,
-      sizes: sizes.split(','), // Converte a string de tamanhos em um array
-      gender: gender.split(','), // Converte a string de gêneros em um array
+      sizes: sizes.split(',').map(s => s.trim()), // Converte a string de tamanhos em um array
+      gender: gender.split(',').map(g => g.trim()), // Converte a string de gêneros em um array
+      colors: colors.split(',').map(c => c.trim()),
       image, // Salva a imagem como Base64
       price,
     });
@@ -293,7 +296,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Rota para atualizar um produto (apenas para administradores)
 app.put('/products/:id', isAdmin, async (req, res) => {
   const { id } = req.params;
-  const { name, sizes, gender, price, image } = req.body;
+  const { name, sizes, gender,colors, price, image } = req.body;
 
   try {
     // Validação do ID
@@ -303,8 +306,9 @@ app.put('/products/:id', isAdmin, async (req, res) => {
 
     const updateData = {
       name,
-      sizes: typeof sizes === 'string' ? sizes.split(',') : sizes,
-      gender: typeof gender === 'string' ? gender.split(',') : gender,
+      sizes: typeof sizes === 'string' ? sizes.split(',').map(s => s.trim()) : sizes,
+      gender: typeof gender === 'string' ? gender.split(',').map(g => g.trim()) : gender,
+      colors: typeof colors === 'string' ? colors.split(',').map(c => c.trim()) : colors,
       price,
     };
 

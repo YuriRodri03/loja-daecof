@@ -226,13 +226,16 @@ app.post('/create-order', async (req, res) => {
 
   try {
     const newOrder = new Order({
-      date: new Date(),
-      userName,
-      userEmail,
-      userPhone,
-      userCourse,
-      items,
-      proofOfPayment,
+      ...req.body,
+      date: new Date().toLocaleString('pt-BR', {
+        timeZone: 'America/Sao_Paulo',
+        userName,
+        userEmail,
+        userPhone,
+        userCourse,
+        items,
+        proofOfPayment,
+      }),
     });
 
     await newOrder.save();
@@ -296,7 +299,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Rota para atualizar um produto (apenas para administradores)
 app.put('/products/:id', isAdmin, async (req, res) => {
   const { id } = req.params;
-  const { name, sizes, gender,colors, price, image } = req.body;
+  const { name, sizes, gender, colors, price, image } = req.body;
 
   try {
     // Validação do ID
@@ -317,8 +320,8 @@ app.put('/products/:id', isAdmin, async (req, res) => {
     }
 
     const product = await Product.findByIdAndUpdate(
-      id, 
-      updateData, 
+      id,
+      updateData,
       { new: true }
     );
 
@@ -326,15 +329,15 @@ app.put('/products/:id', isAdmin, async (req, res) => {
       return res.status(404).send({ message: 'Produto não encontrado' });
     }
 
-    res.send({ 
+    res.send({
       message: 'Produto atualizado com sucesso',
-      product 
+      product
     });
   } catch (error) {
     console.error('Erro no servidor:', error);
-    res.status(500).send({ 
+    res.status(500).send({
       message: 'Erro ao atualizar produto',
-      error: error.message 
+      error: error.message
     });
   }
 });
@@ -365,7 +368,7 @@ app.get('/payment', async (req, res) => {
 app.get('/orders/export', authenticate, async (req, res) => {
   try {
     const { start, end } = req.query;
-    
+
     console.log('Datas recebidas:', start, end); // DEBUG
 
     // Validação das datas
@@ -375,25 +378,25 @@ app.get('/orders/export', authenticate, async (req, res) => {
 
     const startDate = new Date(start);
     const endDate = new Date(end);
-    
+
     // Ajusta para incluir todo o dia final
     endDate.setHours(23, 59, 59, 999);
 
     console.log('Consultando pedidos entre:', startDate, 'e', endDate); // DEBUG
 
     const orders = await Order.find({
-      date: { 
-        $gte: startDate, 
-        $lte: endDate 
+      date: {
+        $gte: startDate,
+        $lte: endDate
       }
     }).lean();
 
     console.log(`Pedidos encontrados: ${orders.length}`); // DEBUG
-    
+
     if (orders.length === 0) {
       // Verificação adicional para ver se há pedidos no banco
       const totalOrders = await Order.countDocuments({});
-      return res.status(404).json({ 
+      return res.status(404).json({
         message: 'Nenhum pedido encontrado no período especificado',
         totalOrdersInDB: totalOrders,
         suggestion: totalOrders > 0 ? 'Verifique o intervalo de datas' : 'Nenhum pedido encontrado no banco de dados'

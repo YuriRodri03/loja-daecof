@@ -68,12 +68,6 @@ function Login() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-          
-          <div className="forgot-password">
-            <a href="#" onClick={(e) => { e.preventDefault(); /* Adicionar lógica de recuperação */ }}>
-              Esqueci minha senha
-            </a>
-          </div>
         </div>
         
         <button className='btn btn-primary' type='button' onClick={handleLogin}>

@@ -509,7 +509,17 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
   }
 });
 
-// Inicia o servidor
+// Configuração para servir o frontend e lidar com refresh
+if (process.env.NODE_ENV === 'production') {
+  // Serve arquivos estáticos do React
+  app.use(express.static(path.join(__dirname, '../client/build')));
+  
+  // Rota catch-all para o frontend (importante para o React Router)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

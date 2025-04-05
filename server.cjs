@@ -14,7 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://loja-daecof.onrender.com/',
+  origin: process.env.FRONTEND_URL || 'https://loja-daecof.onrender.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Permite envio de cookies, se necessário
 }));
@@ -512,7 +512,7 @@ app.post('/payment/proof', upload.single('proof'), async (req, res) => {
 // Configuração para servir o frontend e lidar com refresh
 if (process.env.NODE_ENV === 'production') {
   // Serve arquivos estáticos do React
-  app.use(express.static(path.join(__dirname, '../')));
+  app.use(express.static(path.join(__dirname)));
   
   // Rota catch-all para o frontend (importante para o React Router)
   app.get('*', (req, res) => {

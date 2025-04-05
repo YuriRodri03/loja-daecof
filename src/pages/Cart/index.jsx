@@ -83,6 +83,7 @@ function Cart() {
                     <p><strong>Tamanho:</strong> {item.size}</p>
                     <p><strong>Gênero:</strong> {item.gender}</p>
                     <p><strong>Quantidade:</strong> {item.quantity}</p>
+                    <p><strong>Cor:</strong> {item.color}</p>
                   </div>
                   <p className='cart-item-price'>R$ {item.price.toFixed(2)}</p>
                 </div>

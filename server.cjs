@@ -342,6 +342,32 @@ app.put('/products/:id', isAdmin, async (req, res) => {
   }
 });
 
+// Rota para deletar um produto
+app.delete('/products/:id', isAdmin, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Verifica se o ID é válido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).send({ message: 'ID do produto inválido' });
+    }
+
+    const product = await Product.findByIdAndDelete(id);
+    
+    if (!product) {
+      return res.status(404).send({ message: 'Produto não encontrado' });
+    }
+
+    res.send({ message: 'Produto deletado com sucesso' });
+  } catch (error) {
+    console.error('Erro ao deletar produto:', error);
+    res.status(500).send({ 
+      message: 'Erro ao deletar produto',
+      error: error.message 
+    });
+  }
+});
+
 // Rota para atualizar informações de pagamento
 app.put('/payment', isAdmin, async (req, res) => {
   const paymentInfo = req.body;
